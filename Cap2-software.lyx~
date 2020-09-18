@@ -1,0 +1,762 @@
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass deistesi
+\use_default_options true
+\maintain_unincluded_children false
+\language italian
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize 12
+\spacing onehalf
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 2
+\paperpagestyle plain
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Chapter
+Introduzione a ROS, CAN e CANopen.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+primalettera{I}
+\end_layout
+
+\end_inset
+
+l modello di motion control è basato su ROS, che facilita la comunicazione
+ tra diverse macchine su cui è installato, nel nostro caso tra la base station
+ e il computer di bordo attraverso un link radio.
+ 
+\end_layout
+
+\begin_layout Standard
+Uno dei pregi di ROS è la possibilità di installare librerie aggiuntive
+ che lo dotano di funzionalità extra, tra le quali la possibilità di codificare
+ istruzioni in CANopen.
+ Queste istruzioni servono a controllare il drive, passando attraverso il
+ datalink layer CAN.
+\end_layout
+
+\begin_layout Standard
+In questo capitolo si parlerà nello specifico di ROS, CANopen over CAN.
+\end_layout
+
+\begin_layout Section
+ROS
+\end_layout
+
+\begin_layout Standard
+ROS, o Robot Operative System, non è un sistema operativo in sè, ma un middlewar
+e open-source per la robotica.
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ROS2009"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Frutto dell'unione iniziale di diversi progetti dell'università di Stanford
+ (tra cui Stanford AI Robot, STAIR e Personal Robot, PR) attraverso l'appoggio
+ di Willow Garage (un incubatore per la robotica) ROS comprende una collezione
+ di librerie, strumenti e convenzioni che hanno lo scopo di semplificare
+ il controllo di un robot.
+\end_layout
+
+\begin_layout Standard
+Lo sviluppo di ROS è basato su un modello "Federale" in cui un gruppo può
+ scaricare il codice di ROS nel proprio server, lavorarci e decidere in
+ seguito se renderlo disponibile pubblicamente sotto forma di open software.
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ROS2017"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+I processi di ROS sono rappresentati come nodi in una struttura a grafi.
+ 
+\end_layout
+
+\begin_layout Standard
+I nodi comunicano tra di loro inviando messaggi attraverso canali chiamati
+ topics, possono svolgere funzioni o richiedere lo svolgimento di funzioni
+ per e da altri nodi o accedere a un database di informazioni comuni chiamato
+ parameter server.
+ 
+\end_layout
+
+\begin_layout Standard
+Nel 2020 è uscita l'ultima versione di ROS, Noetic Ninjemys.
+ Infatti la maggior parte delle risorse della open robotic foundation è
+ stata destinata allo sviluppo di ROS2 che, a differenza del suo predecessore,
+ permette il controllo in real-time.
+ 
+\end_layout
+
+\begin_layout Subsection
+ROS master
+\end_layout
+
+\begin_layout Standard
+Il master rende le comunicazioni possibili registrando i nodi a se stesso,
+ per poi fare un set-up di comunicazioni peer-to-peer tra i nodi attraverso
+ i topics.
+ 
+\end_layout
+
+\begin_layout Standard
+Il master inoltre svolge la funzione di controllo degli update del parameter
+ server.
+ 
+\end_layout
+
+\begin_layout Standard
+Attivare il master è la prima operazione da svolgere, attraverso il comando:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ roscore
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ROS2009a"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Nodi 
+\end_layout
+
+\begin_layout Standard
+I nodi rappresentano singoli processi, ognuno con un nome definito, e sono
+ alla base di ROS.
+ 
+\end_layout
+
+\begin_layout Standard
+Per funzionare un nodo deve essere iscritto al master.
+ 
+\end_layout
+
+\begin_layout Standard
+Ogni nodo esegue delle azioni in base agli input ricevuti.
+ Queste azioni possono essere comunicare con altri nodi attraverso i topics,
+ modificare il parameter server, oppure offrire servizi.
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ROS2009a"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Topics
+\end_layout
+
+\begin_layout Standard
+Un topic è un canale di comunicazione dotato di nome univoco, attraverso
+ cui i nodi inviano messaggi pubblicandoli sul topic, oppure li ricevono
+ se iscritti al topic.
+ 
+\end_layout
+
+\begin_layout Standard
+Pubblicare e sottoscriversi ad un topic è anonimo, quindi un nodo sa solo
+ con quale topic sta interagendo, ma non con quali nodi.
+ 
+\end_layout
+
+\begin_layout Standard
+I messaggi che passano attraverso un topic possono trasportare qualsiasi
+ tipo di dato, ed hanno una struttura definita attraverso un file .msg.
+ 
+\end_layout
+
+\begin_layout Standard
+Per esempio un messaggio può contenere due campi, x e y, uno definito come
+ un int32 e uno definito come int16 nel seguente modo:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+int32 x
+\end_layout
+
+\begin_layout Plain Layout
+
+int16 y
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ROS2019"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Servizi
+\end_layout
+
+\begin_layout Standard
+Azioni complesse che portano ad un solo output vengono chiamate servizi.
+ Un nodo può offrire un servizio (come l'acquisizione di un immagine, il
+ calcolo di un percorso, o l'invio di un comando attraverso una linea seriale)
+ o richiederlo ad un altro nodo.
+ Questo rende particolarmente facile delegare computazioni complesse ad
+ una macchina esterna con più potenza di calcolo.
+ 
+\end_layout
+
+\begin_layout Standard
+Un servizio è definito da una coppia di messaggi, uno per la richiesta e
+ uno per la risposta, definiti attraverso un file .srv.
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ROS2017a"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Strumenti 
+\end_layout
+
+\begin_layout Standard
+ROS dispone inoltre di strumenti utili a lavorare con nodi, topics e servizi
+ che vengono forniti nell'installazione base.
+ Tra i più importanti elenchiamo:
+\end_layout
+
+\begin_layout Subsubsection
+rviz: 
+\end_layout
+
+\begin_layout Standard
+Un visualizzatore in tre dimensioni utilizzato per testare i robot e l'ambiente
+ in cui lavorano.
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ROS2018"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+roslaunch
+\end_layout
+
+\begin_layout Standard
+Roslaunch viene utilizzato per attivare più nodi contemporaneamente sia
+ sulla macchina locale che in remoto, permette di agglomerare più processi
+ di inizializzazione in uno script, in modo da ridurli a un singolo comando.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+Catkin
+\end_layout
+
+\begin_layout Standard
+Basato su Cmake, catkin è un "build tool", un programma che automatizza
+ la creazione di applicazioni eseguibili a partire da codice sorgente.
+ Catkin permette di creare ambienti di sviluppo e di utilizzare librerie
+ semplicemente clonando il loro codice sorgente da github.
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ROS2017b"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Bus CAN
+\end_layout
+
+\begin_layout Standard
+Il bus CAN (controller area network) è uno standard originariamente sviluppato
+ per permettere una robusta comunicazione tra microcontrollori in campo
+ automotive.
+ Al momento fa parte degli standard EOBD e OBD-II(on-board diagnostics),
+ che rendono la sua presenza obbligatoria su tutti i veicoli venduti nell'unione
+ europea e negli stati uniti.
+ 
+\end_layout
+
+\begin_layout Standard
+Oltre all'ambito automotive vede svariati utilizzi che variano dalle macchine
+ agricole, all'areonautica, automazione, ascensori e strumentazione medica.
+ 
+\end_layout
+
+\begin_layout Standard
+Il bus can occupa i due livelli più bassi del modello ISO-OSI: Fisico e
+ Data-link.
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "FlorianHartwich2017,CiA"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Livello fisico 
+\end_layout
+
+\begin_layout Standard
+CAN è un bus seriale producer-consumer in cui i vari nodi sono tutti connessi
+ tra loro tramite due cavi.
+ 
+\end_layout
+
+\begin_layout Standard
+Nel nostro caso il bus collega il drive al connettore PCAN, ed entrambi
+ sono considerati nodi.
+ Questo bus usa una logica cablata differenziale con due segnali: CAN-H
+ e CAN-L.
+ 
+\end_layout
+
+\begin_layout Standard
+I segnali vengono impostati su uno stato dominante quando CAN-H ha una tensione
+ più alta di CAN-L.
+ Vengono riportati in uno stato recessivo da un resistore passivo, con CAN-H
+ a tensione più bassa di CAN-L, quando non viene più fornita tensione.
+ Un bit a 0 codifica un segnale dominante, mentre un bit a 1 un segnale
+ recessivo.
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "2002"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Livello trasmissione dati
+\end_layout
+
+\begin_layout Standard
+Ogni nodo può richiedere il permesso di trasmissione di un frame in qualsiasi
+ momento, ma i frame con identificativo più alto hanno la precedenza per
+ l'utilizzo del bus.
+ In questo modo si evitano conflitti di trasmissione.
+\begin_inset CommandInset citation
+LatexCommand cite
+key "CiA2020"
+
+\end_inset
+
+ Tutti i frame sono trasmessi in broadcast e nel CAN classico il payload
+ massimo è limitato a 8 byte.
+ 
+\end_layout
+
+\begin_layout Standard
+Un frame CAN è composto da 8 campi, come segue:
+\end_layout
+
+\begin_layout Enumerate
+Start of frame (1 bit)
+\end_layout
+
+\begin_layout Enumerate
+Standard Identifier (11 bit) 
+\end_layout
+
+\begin_layout Enumerate
+Remote Transmission Request (1 bit) 
+\end_layout
+
+\begin_layout Enumerate
+Control (6 bit)
+\end_layout
+
+\begin_layout Enumerate
+Data (8 byte)
+\end_layout
+
+\begin_layout Enumerate
+Cyclic Redundancy Check (16 bit)
+\end_layout
+
+\begin_layout Enumerate
+ACK (2 bit)
+\end_layout
+
+\begin_layout Enumerate
+End Of Frame (7 bit) 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename immagini/CAN-bus-frame-standard-message-SOF-ID-RTR-Control-Data-CRC-ACK-EOF.jpg
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Frame CAN standard
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset citation
+LatexCommand cite
+key "2020"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Comment
+status open
+
+\begin_layout Plain Layout
+inserire immagine frame can e bibliografia
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+CANopen over CAN
+\end_layout
+
+\begin_layout Standard
+Mentre CAN rappresenta i due livelli più bassi del modello OSI, CANopen
+ occupa il livello più alto, quello di applicazione (CiA 402
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Cia2002"
+
+\end_inset
+
+).
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename immagini/CANopen-and-CAN-schematic.png
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Schema degli standard CAN e CANopen nel modello OSI
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Boterenbrood2005"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+CANopen integra al suo interno diversi concetti: 
+\end_layout
+
+\begin_layout Subsection
+Object dictionary
+\end_layout
+
+\begin_layout Standard
+Ogni nodo della reta CANopen deve essere provvisto dell'object dictionary
+ (OD): una struttura standardizzata che contiene tutti i parametri e i registri
+ che descrivono il suo comportamento, dal nome del device(un parametro statico),
+ fino ad arrivare al target di velocità nel caso di un drive per motori
+ (contenuto in un registro che deve poter essere modificato durante il funzionam
+ento).
+ Ad ogni voce dell'OD si accede tramite un indice esadecimale, a cui è aggiunto
+ un sotto-indice a 8 bit.
+ Per esempio per accedere alla voce che contiene la frequenza dell'heartbeat
+ (un parametro che ci serve per capire se il nodo sta funzionando correttamente)
+ utilizzeremo l'indice 0x1017, subindex 0.
+ 
+\end_layout
+
+\begin_layout Standard
+Tra i registri del drive, quelli più importanti nella nostra applicazione
+ sono ControlWord (0x6040), StatusWord (0x6041), Heartbeat (0x1017) e Target
+ Velocity (0x800D)
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Boterenbrood2005,Microphase2003,Microphase2017"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Comment
+status open
+
+\begin_layout Plain Layout
+inserire indirizzi e citazione
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Protocolli di comunicazione, SDO
+\end_layout
+
+\begin_layout Standard
+Per modificare e leggere le voci dell'object dictionary si utilizza l'SDO,
+ Service Data Object.
+ L'SDO è un protocollo di comunicazione relativamente lento in quanto ha
+ un comportamento "client-server" che comporta un overhead sostanziale,
+ non è possibile utilizzarlo per trasmettere dati in real-time.
+ Nel nostro caso il computer di bordo (client) inizia una comunicazione
+ con il drive (server) e può richiedere una lettura di una voce dell'OD
+ (SDO upload) oppure può modificare una voce dell'OD (SDO download).
+ 
+\end_layout
+
+\begin_layout Standard
+Ogni CAN frame di un SDO può portare fino a 4 byte, e ad ogni richiesta
+ segue una risposta.
+ Quindi per leggere 4 byte di informazione ho bisogno di un CAN frame per
+ inviare la richiesta, e uno per ricevere la risposta.
+ 
+\end_layout
+
+\begin_layout Standard
+Gli SDO sono molto flessibili: permettono il trasporto di una grande quantità
+ di dati utilizzando più CAN frames, e funzionano anche con un nodo in modalità
+ pre-operational.
+ 
+\end_layout
+
+\begin_layout Standard
+Per questo motivo solitamente vengono utilizzati per il setup iniziale di
+ un nodo.
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Boterenbrood2005,Electronics2020"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Protocolli di comunicazione, PDO
+\end_layout
+
+\begin_layout Standard
+Il PDO invece è un servizio a basso overhead (solo 4 byte) molto più veloce
+ dell'SDO, viene utilizzato per trasmettere dati in real-time.
+ Mentre per trasportare 8 byte di dati ad un PDO basta un CAN frame, per
+ trasportare la stessa informazione ad un SDO ne servirebbero 4 (due richieste
+ e due risposte da 4 byte ciascuna).
+ Per questo motivo si usano i PDO per trasmettere feedback di posizione
+ oppure per settare un target di velocità.
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Electronics2020,Boterenbrood2005"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Profili di Moto, CiA 402
+\end_layout
+
+\begin_layout Standard
+Il CiA 402 è un profilo standardizzato per drives elettrici che implementa
+ diverse modalità di funzionamento, tra cui Homing, Profile Position, Interpolat
+ed Position, Profile Torque e Velocity.
+ Tutte queste modalità sono supportate dal drive Microphase, ma quella di
+ nostro interesse è la modalità a target di velocità.
+ 
+\end_layout
+
+\begin_layout Standard
+Lo standard CiA 402 inoltre implementa una macchina a stati, che implementa
+ l'attivazione e il blocco del drive oltre ad altri comandi specifici della
+ modalità di funzionamento impostata.
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Cia2002"
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

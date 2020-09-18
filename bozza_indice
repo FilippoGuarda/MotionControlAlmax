@@ -1,0 +1,20 @@
+#Titolo temporaneo: Benchmarking di sistema di controllo motori bldc in ambito ALMAX
+
+##Introduzione
+progetto almax, specifiche del progetto, pipeline desiderata, possibili metodi 
+
+##Capitolo 1, setup Hardware
+studio in dettaglio di motori e driver, cablaggio, adattatori "home-made" costruiti da rj45 a db9 (uno dei due rs422, l'altro CAN)
+
+##Capitolo 2, setup Software
+programmazione dei parametri del driver tramite software windows in seriale rs422, setup ambiente ROS kinetic, installazione dei pacchetti CANUtils, CANOpenSocket e delle librerie ROS_canopen, Kacanopen.
+
+
+##Capitolo 3, problematiche incontrate 
+Problemi del connettore pcan-usb, dei pacchetti CAN utils, tentativo con i driver proprietari e pcan-view.
+Impossibilità di utilizzare kacanopen in quanto i driver e la versione di ROS che utilizza sono obsoleti, mancanza di documentazione e codice sorgente non commentato di ROS-industrial.
+
+##Conclusione, possibili soluzioni successive
+-eseguire un branch di Kacanopen con driver funzionanti  
+-(a lungo termine) contattare il mantainer di ros-industrial, mathias ludtke e sviluppare una documentazione  
+-sviluppare un socket e stack canopen from scratch  

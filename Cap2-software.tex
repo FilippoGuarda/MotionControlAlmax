@@ -1,0 +1,272 @@
+
+\chapter{Introduzione a ROS, CAN e CANopen.}
+
+\primalettera{I}l modello di motion control è basato su ROS, che
+facilita la comunicazione tra diverse macchine su cui è installato,
+nel nostro caso tra la base station e il computer di bordo attraverso
+un link radio. 
+
+Uno dei pregi di ROS è la possibilità di installare librerie aggiuntive
+che lo dotano di funzionalità extra, tra le quali la possibilità di
+codificare istruzioni in CANopen. Queste istruzioni servono a controllare
+il drive, passando attraverso il datalink layer CAN.
+
+In questo capitolo si parlerà nello specifico di ROS, CANopen over
+CAN.
+
+\section{ROS}
+
+ROS, o Robot Operative System, non è un sistema operativo in sè, ma
+un middleware open-source per la robotica. \cite{ROS2009}
+
+Frutto dell'unione iniziale di diversi progetti dell'università di
+Stanford (tra cui Stanford AI Robot, STAIR e Personal Robot, PR) attraverso
+l'appoggio di Willow Garage (un incubatore per la robotica) ROS comprende
+una collezione di librerie, strumenti e convenzioni che hanno lo scopo
+di semplificare il controllo di un robot.
+
+Lo sviluppo di ROS è basato su un modello \textquotedbl{}Federale\textquotedbl{}
+in cui un gruppo può scaricare il codice di ROS nel proprio server,
+lavorarci e decidere in seguito se renderlo disponibile pubblicamente
+sotto forma di open software. \cite{ROS2017}
+
+I processi di ROS sono rappresentati come nodi in una struttura a
+grafi. 
+
+I nodi comunicano tra di loro inviando messaggi attraverso canali
+chiamati topics, possono svolgere funzioni o richiedere lo svolgimento
+di funzioni per e da altri nodi o accedere a un database di informazioni
+comuni chiamato parameter server. 
+
+Nel 2020 è uscita l'ultima versione di ROS, Noetic Ninjemys. Infatti
+la maggior parte delle risorse della open robotic foundation è stata
+destinata allo sviluppo di ROS2 che, a differenza del suo predecessore,
+permette il controllo in real-time. 
+
+\subsection{ROS master}
+
+Il master rende le comunicazioni possibili registrando i nodi a se
+stesso, per poi fare un set-up di comunicazioni peer-to-peer tra i
+nodi attraverso i topics. 
+
+Il master inoltre svolge la funzione di controllo degli update del
+parameter server. 
+
+Attivare il master è la prima operazione da svolgere, attraverso il
+comando:
+\begin{lstlisting}
+$ roscore
+\end{lstlisting}
+\cite{ROS2009a}
+
+\subsection{Nodi }
+
+I nodi rappresentano singoli processi, ognuno con un nome definito,
+e sono alla base di ROS. 
+
+Per funzionare un nodo deve essere iscritto al master. 
+
+Ogni nodo esegue delle azioni in base agli input ricevuti. Queste
+azioni possono essere comunicare con altri nodi attraverso i topics,
+modificare il parameter server, oppure offrire servizi. \cite{ROS2009a}
+
+\subsection{Topics}
+
+Un topic è un canale di comunicazione dotato di nome univoco, attraverso
+cui i nodi inviano messaggi pubblicandoli sul topic, oppure li ricevono
+se iscritti al topic. 
+
+Pubblicare e sottoscriversi ad un topic è anonimo, quindi un nodo
+sa solo con quale topic sta interagendo, ma non con quali nodi. 
+
+I messaggi che passano attraverso un topic possono trasportare qualsiasi
+tipo di dato, ed hanno una struttura definita attraverso un file .msg. 
+
+Per esempio un messaggio può contenere due campi, x e y, uno definito
+come un int32 e uno definito come int16 nel seguente modo:
+
+\begin{lstlisting}
+int32 x
+int16 y
+\end{lstlisting}
+
+\cite{ROS2019}
+
+\subsection{Servizi}
+
+Azioni complesse che portano ad un solo output vengono chiamate servizi.
+Un nodo può offrire un servizio (come l'acquisizione di un immagine,
+il calcolo di un percorso, o l'invio di un comando attraverso una
+linea seriale) o richiederlo ad un altro nodo. Questo rende particolarmente
+facile delegare computazioni complesse ad una macchina esterna con
+più potenza di calcolo. 
+
+Un servizio è definito da una coppia di messaggi, uno per la richiesta
+e uno per la risposta, definiti attraverso un file .srv. \cite{ROS2017a}
+
+\subsection{Strumenti }
+
+ROS dispone inoltre di strumenti utili a lavorare con nodi, topics
+e servizi che vengono forniti nell'installazione base. Tra i più importanti
+elenchiamo:
+
+\subsubsection{rviz: }
+
+Un visualizzatore in tre dimensioni utilizzato per testare i robot
+e l'ambiente in cui lavorano. \cite{ROS2018}
+
+\subsubsection{roslaunch}
+
+Roslaunch viene utilizzato per attivare più nodi contemporaneamente
+sia sulla macchina locale che in remoto, permette di agglomerare più
+processi di inizializzazione in uno script, in modo da ridurli a un
+singolo comando. 
+
+\subsubsection{Catkin}
+
+Basato su Cmake, catkin è un \textquotedbl{}build tool\textquotedbl{},
+un programma che automatizza la creazione di applicazioni eseguibili
+a partire da codice sorgente. Catkin permette di creare ambienti di
+sviluppo e di utilizzare librerie semplicemente clonando il loro codice
+sorgente da github. \cite{ROS2017b}
+
+\section{Bus CAN}
+
+Il bus CAN (controller area network) è uno standard originariamente
+sviluppato per permettere una robusta comunicazione tra microcontrollori
+in campo automotive. Al momento fa parte degli standard EOBD e OBD-II(on-board
+diagnostics), che rendono la sua presenza obbligatoria su tutti i
+veicoli venduti nell'unione europea e negli stati uniti. 
+
+Oltre all'ambito automotive vede svariati utilizzi che variano dalle
+macchine agricole, all'areonautica, automazione, ascensori e strumentazione
+medica. 
+
+Il bus can occupa i due livelli più bassi del modello ISO-OSI: Fisico
+e Data-link. \cite{FlorianHartwich2017,CiA}
+
+\subsection{Livello fisico }
+
+CAN è un bus seriale producer-consumer in cui i vari nodi sono tutti
+connessi tra loro tramite due cavi. 
+
+Nel nostro caso il bus collega il drive al connettore PCAN, ed entrambi
+sono considerati nodi. Questo bus usa una logica cablata differenziale
+con due segnali: CAN-H e CAN-L. 
+
+I segnali vengono impostati su uno stato dominante quando CAN-H ha
+una tensione più alta di CAN-L. Vengono riportati in uno stato recessivo
+da un resistore passivo, con CAN-H a tensione più bassa di CAN-L,
+quando non viene più fornita tensione. Un bit a 0 codifica un segnale
+dominante, mentre un bit a 1 un segnale recessivo. \cite{2002}\newpage{}
+
+\subsection{Livello trasmissione dati}
+
+Ogni nodo può richiedere il permesso di trasmissione di un frame in
+qualsiasi momento, ma i frame con identificativo più alto hanno la
+precedenza per l'utilizzo del bus. In questo modo si evitano conflitti
+di trasmissione.\cite{CiA2020} Tutti i frame sono trasmessi in broadcast
+e nel CAN classico il payload massimo è limitato a 8 byte. 
+
+Un frame CAN è composto da 8 campi, come segue:
+\begin{enumerate}
+\item Start of frame (1 bit)
+\item Standard Identifier (11 bit) 
+\item Remote Transmission Request (1 bit) 
+\item Control (6 bit)
+\item Data (8 byte)
+\item Cyclic Redundancy Check (16 bit)
+\item ACK (2 bit)
+\item End Of Frame (7 bit) 
+\end{enumerate}
+\begin{figure}[H]
+\centering{}\includegraphics[scale=0.5]{immagini/CAN-bus-frame-standard-message-SOF-ID-RTR-Control-Data-CRC-ACK-EOF}\caption{Frame CAN standard}
+\end{figure}
+
+\cite{2020}
+
+\begin{comment}
+inserire immagine frame can e bibliografia
+\end{comment}
+\newpage{}
+
+\section{CANopen over CAN}
+
+Mentre CAN rappresenta i due livelli più bassi del modello OSI, CANopen
+occupa il livello più alto, quello di applicazione (CiA 402\cite{Cia2002}). 
+
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[scale=0.5]{immagini/CANopen-and-CAN-schematic}\caption{Schema degli standard CAN e CANopen nel modello OSI}
+\cite{Boterenbrood2005}
+\par\end{centering}
+\end{figure}
+
+CANopen integra al suo interno diversi concetti: 
+
+\subsection{Object dictionary}
+
+Ogni nodo della reta CANopen deve essere provvisto dell'object dictionary
+(OD): una struttura standardizzata che contiene tutti i parametri
+e i registri che descrivono il suo comportamento, dal nome del device(un
+parametro statico), fino ad arrivare al target di velocità nel caso
+di un drive per motori (contenuto in un registro che deve poter essere
+modificato durante il funzionamento). Ad ogni voce dell'OD si accede
+tramite un indice esadecimale, a cui è aggiunto un sotto-indice a
+8 bit. Per esempio per accedere alla voce che contiene la frequenza
+dell'heartbeat (un parametro che ci serve per capire se il nodo sta
+funzionando correttamente) utilizzeremo l'indice 0x1017, subindex
+0. 
+
+Tra i registri del drive, quelli più importanti nella nostra applicazione
+sono ControlWord (0x6040), StatusWord (0x6041), Heartbeat (0x1017)
+e Target Velocity (0x800D)\cite{Boterenbrood2005,Microphase2003,Microphase2017}. 
+
+\begin{comment}
+inserire indirizzi e citazione
+\end{comment}
+
+
+\subsection{Protocolli di comunicazione, SDO}
+
+Per modificare e leggere le voci dell'object dictionary si utilizza
+l'SDO, Service Data Object. L'SDO è un protocollo di comunicazione
+relativamente lento in quanto ha un comportamento \textquotedbl{}client-server\textquotedbl{}
+che comporta un overhead sostanziale, non è possibile utilizzarlo
+per trasmettere dati in real-time. Nel nostro caso il computer di
+bordo (client) inizia una comunicazione con il drive (server) e può
+richiedere una lettura di una voce dell'OD (SDO upload) oppure può
+modificare una voce dell'OD (SDO download). 
+
+Ogni CAN frame di un SDO può portare fino a 4 byte, e ad ogni richiesta
+segue una risposta. Quindi per leggere 4 byte di informazione ho bisogno
+di un CAN frame per inviare la richiesta, e uno per ricevere la risposta. 
+
+Gli SDO sono molto flessibili: permettono il trasporto di una grande
+quantità di dati utilizzando più CAN frames, e funzionano anche con
+un nodo in modalità pre-operational. 
+
+Per questo motivo solitamente vengono utilizzati per il setup iniziale
+di un nodo. \cite{Boterenbrood2005,Electronics2020}
+
+\subsection{Protocolli di comunicazione, PDO}
+
+Il PDO invece è un servizio a basso overhead (solo 4 byte) molto più
+veloce dell'SDO, viene utilizzato per trasmettere dati in real-time.
+Mentre per trasportare 8 byte di dati ad un PDO basta un CAN frame,
+per trasportare la stessa informazione ad un SDO ne servirebbero 4
+(due richieste e due risposte da 4 byte ciascuna). Per questo motivo
+si usano i PDO per trasmettere feedback di posizione oppure per settare
+un target di velocità. \cite{Electronics2020,Boterenbrood2005}
+
+\subsection{Profili di Moto, CiA 402}
+
+Il CiA 402 è un profilo standardizzato per drives elettrici che implementa
+diverse modalità di funzionamento, tra cui Homing, Profile Position,
+Interpolated Position, Profile Torque e Velocity. Tutte queste modalità
+sono supportate dal drive Microphase, ma quella di nostro interesse
+è la modalità a target di velocità. 
+
+Lo standard CiA 402 inoltre implementa una macchina a stati, che implementa
+l'attivazione e il blocco del drive oltre ad altri comandi specifici
+della modalità di funzionamento impostata. \cite{Cia2002}

@@ -1,0 +1,463 @@
+%% LyX 2.2.4 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[12pt,italian]{book}
+\usepackage[T1]{fontenc}
+\usepackage[latin9]{inputenc}
+\pagestyle{plain}
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{3}
+\usepackage{babel}
+\usepackage{verbatim}
+\usepackage{float}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage[unicode=true,
+ bookmarks=true,bookmarksnumbered=false,bookmarksopen=true,bookmarksopenlevel=1,
+ breaklinks=true,pdfborder={0 0 1},backref=false,colorlinks=false]
+ {hyperref}
+\hypersetup{pdftitle={Cloud Migration},
+ pdfauthor={Andrea Decorte},
+ pdfsubject={Cloud Computing},
+ pdfkeywords={cloud, SCE, migration, enterprise, IBM}}
+
+\makeatletter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
+% Customized LaTeX preamble %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% --- Page geometry --- %
+\usepackage{geometry}
+\usepackage{url}
+\geometry{
+verbose,a4paper,lmargin=0.17\paperwidth,
+rmargin=0.1\paperwidth
+}
+
+% Vertical length parameters
+
+% Text height
+\setlength\textheight{0.7\paperheight}
+% Space at top of page
+\setlength\topmargin{0pt}
+% Space beteen header and text
+\setlength\headsep{0.08\textheight}
+% Space between text and footer (not footnote!)
+\setlength\footskip{0.08\textheight}
+% 2.5 lines space between text and footnote
+\renewcommand\footnoterule{
+\vspace{2.5em}
+\kern-3\p@\hrule\@width.4\columnwidth%
+\kern2.6\p@}
+  
+% --- Common packages --- %
+\usepackage{amsmath,amsfonts,amssymb,amsthm,multicol}
+\usepackage{epsfig,verbatim}
+\usepackage{ifthen}
+
+% --- Big letters at the beginning of chapters --- %
+% "ptmri" is the italic version of "ptmr"
+\newfont{\iniziocap}{ptmri scaled 5000}
+\newcommand{\primalettera}[1]{
+{\iniziocap #1}
+
+
+\vspace*{-4em}\hangindent=4em\hangafter=-3\hspace*{-1.5em}}
+
+% --- Fonts --- %
+%\usepackage{ae}
+%\usepackage{aecompl}
+%\usepackage{lmodern}
+\renewcommand{\rmdefault}{ptm}
+\renewcommand{\sfdefault}{phv}
+\renewcommand{\ttdefault}{pcr}
+\renewcommand{\sldefault}{it}
+
+
+% --- For clickable URL's --- %
+\usepackage{hyperref}
+
+% --- Fancy headers --- %
+\usepackage{fancyhdr}
+
+% --- Useful commands --- %
+\newcommand{\clearemptydoublepage}{
+\newpage{\pagestyle{empty}
+\cleardoublepage}
+}
+
+% --- Andrea: Add unnumbered chapters to index and fix the headers --- %
+\newcommand{\aggiungiAIndice}[1]
+{ %adds chapter to index with the chosen name
+\addcontentsline{toc}{chapter}{\protect\numberline{}#1}
+%adds the correct header check fancyhdr docs
+\markboth{#1}{} 
+}
+
+\newcommand{\@titolo}{?}
+
+\newcommand{\@facolta}{?}
+
+\newcommand{\@corso}{?}
+
+\newcommand{\@annoaccademico}{?}
+
+\newcommand{\@sessione}{i}
+
+\newcommand{\@relatore}{?}
+
+\newcommand{\@laureando}{?}
+
+\newcommand{\facolta}[1]{
+ \renewcommand{\@facolta}{
+ \uppercase{facolt\`a di #1}}}
+
+\newcommand{\corso}[1]{
+ \renewcommand{\@corso}{\uppercase{#1}}}
+
+\newcommand{\annoaccademico}[1]{
+ \renewcommand{\@annoaccademico}{#1}}
+
+\newcommand{\sessione}[1]{
+ \renewcommand{\@sessione}{\uppercase{#1}}}
+
+\newcommand{\relatore}[2][Chiar.mo Prof. Ing.]{
+ \renewcommand{\@relatore}{#1\\ \uppercase{#2}}}
+
+\newcommand{\laureando}[1]{
+ \renewcommand{\@laureando}{\uppercase{#1}}}
+
+\newcommand{\titolo}[1]{
+ \renewcommand{\@titolo}{\uppercase{#1}}}
+
+% --- Personalized title page --- %
+\renewcommand{\maketitle}{
+ \begin{titlepage}{
+  \vspace*{-0.1\textheight}
+  \begin{center}\begin{large}
+   \uppercase{alma mater studiorum -- universit\`a di bologna\\}
+   \medskip\end{large}
+   \smallskip
+   \rule{\textwidth}{.4pt}\\
+   \vfill 
+   \begin{large}
+   \uppercase{\@facolta\\}
+   \vfill
+   \ifthenelse{\not\isundefined{\@corsodilaureaspec}}
+   {\uppercase{corso di laurea specialistica in \@corsodilaureaspec\\}}
+   {\ifthenelse{\not\isundefined{\@corsodilaurea}}
+   {\uppercase{corso di laurea in \@corsodilaurea\\}}{}}\end{large}
+
+   \begin{large}
+    \ifthenelse{\isundefined{\@correlatorea}}{\vspace{16ex}}
+    {\ifthenelse{\isundefined{\@correlatoreb}}{\vspace{10ex}}{\vspace{6ex}}}
+
+    {\setlength{\baselineskip}{1.5\baselineskip}
+
+     \begin{huge}\@titolo\end{huge}\\}
+
+    \ifthenelse{\isundefined{\@correlatorea}}{\vspace{16ex}}
+    {\ifthenelse{\isundefined{\@correlatoreb}}{\vspace{10ex}}{\vspace{6ex}}}
+
+    Tesi in\\
+    \@corso\\
+    \vfill        
+    \begin{multicols}{2}
+     \raggedright
+     \emph{Relatore}:\\
+     \@relatore\\
+  
+     \ifthenelse{\isundefined{\@correlatorea}}{}{
+      \bigskip
+      \emph{Correlatore}:\\
+      \vfill
+      \@correlatorea\\
+     }
+
+     \ifthenelse{\isundefined{\@correlatoreb}}{}{
+      \bigskip
+      \emph{Correlatore}:\\
+      \vfill
+      \@correlatoreb\\
+     }
+
+     \columnbreak
+     \raggedleft
+     \emph{Presentata da}:\\
+     \@laureando\\	  
+
+    \end{multicols}
+
+    \vfill
+    \rule{\textwidth}{.4pt}\\
+    \vfill
+    Sessione \@sessione\\
+    \vfill
+    Anno Accademico \@annoaccademico\\
+    \end{large}\end{center}	
+}\end{titlepage}}
+
+% --- Dedication command --- %
+\newcommand{\dedica}[1]{
+  \clearemptydoublepage
+  \thispagestyle{empty}
+  \vspace*{10ex}
+  \begin{Large}
+    \begin{flushright}
+      \emph{#1}
+    \end{flushright}
+  \end{Large}
+  \vfill
+  \clearemptydoublepage
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\@corsodilaurea}{?}
+\newcommand{\corsodilaurea}[1]{
+  \renewcommand{\@corsodilaurea}{\uppercase{#1}}}
+
+\makeatother
+
+\usepackage{listings}
+\renewcommand{\lstlistingname}{Listato}
+
+\begin{document}
+
+\facolta{Ingegneria}
+
+\corsodilaurea{Ingegneria dell'Automazione}
+
+\titolo{Analisi di soluzioni di motion control per azionamenti BLDC nel progetto
+AlmaX}
+
+\corso{Ingegneria dei Sistemi di Controllo}
+
+\laureando{Filippo Guarda}
+
+\relatore{Andrea Tilli}
+
+\sessione{iii}
+
+\annoaccademico{2019-2020}
+\maketitle
+
+\dedica{To everybody}
+
+\begin{frontmatter}
+
+\tableofcontents{}
+
+\listoffigures
+
+\end{frontmatter}
+
+\begin{mainmatter}
+
+% Questi abbelliscono l'intestazione delle pagine
+% successive a quella di inizio capitolo.
+\pagestyle{fancy}
+
+% Nomi dei capitoli in lowercase nelle intestazioni
+\renewcommand{\chaptermark}[1]{
+ \markboth{\MakeUppercase{
+ \chaptername}\ \thechapter.
+ \ #1}{}}
+
+\fancyhead[EL,OR]{\leftmark}
+\fancyhead[OL,EC,OC,ER]{ }
+
+\chapter*{Introduzione\aggiungiAIndice{Introduzione}}
+
+\primalettera{L}a ERC, European Rover Challenge, è una competizione
+a livello europeo organizzata dal 2014 in Polonia. Anche l'università
+di Bologna, in collaborazione con la sede di Forlì, partecipa a questa
+competizione con il gruppo AlmaX, che ha il compito di sviluppare
+un rover che rispetti le specifiche fornite nel regolamento \cite{rules},
+tra cui: 
+\begin{itemize}
+\item Un peso pari o inferiore a 50kg.
+\item La capacità di movimento autonomo attraverso computer vision e mapping
+topografico, oltre alla possibilità di inviare comandi al rover da
+una base station via link radio.
+\item La capacità del rover di attraversare ostacoli e terreno accidentato
+simile al suolo marziano.
+\item La capacità del rover di interagire con un pannello di controllo fisico
+\end{itemize}
+L'argomento di questa tesi è il benchmark del motion control del Rover. 
+
+\section{Pipeline}
+
+I motori BLDC forniti sono Siboni ProPlanet S60 ed S40 dotati di freno
+integrato ed encoder incrementale, ognuno controllato da un drive
+MicroPhase MicroOne, che riceve in broadcast istruzioni attraverso
+un seriale CAN. Le istruzioni sono codificate in CANopen da un adattatore
+Peak Usb collegato a un computer di bordo su cui è installato ROS
+(Robot Operative System), il quale a sua volta riceve messaggi da
+una base station sulla quale è sempre installato ROS.
+
+\begin{comment}
+TODO inserire immagine
+\end{comment}
+.
+
+Nel capitolo 1 si studieranno nello specifico l'hardware e i metodi
+utilizzati per connettere i diversi elementi del progetto, nel capitolo
+2 si studierà il software necessario a permettere la comunicazione
+tra i componenti. Nel capitolo 3 si elencheranno le problematiche
+incontrate. 
+
+\chapter{Architettura e componenti Hardware}
+
+\section{Motori BLDC }
+
+\primalettera{O}bbiettivo del progetto è il controllo di un motore
+BLDC, in questo caso i motori forniti sono Siboni S60 ed S40. Questi
+motori hanno le seguenti specifiche, che ci saranno utili più tardi
+per inserirle nei parametri del drive: 
+
+\begin{comment}
+INSERIRE TABELLA
+\end{comment}
+
+I motori dispongono di connettori di tipo %
+\begin{comment}
+INSERIRE TIPOLOGIA CONNETTORI
+\end{comment}
+, con la seguente schematica: 
+
+\begin{comment}
+INSERIRE IMMAGINE
+\end{comment}
+
+
+\section{Computer di bordo}
+
+Nel rover, il computer di bordo è una UPboard, molto comoda in quanto
+estremamente modulare e dotata di moduli extra. Tra i muduli disponibili
+è presente anche uno dotato di porte seriali CAN e rs422, molto utile
+ai fini del progetto in quanto riduce il numero di connettori extra. 
+
+Per questo progetto, non essendo disponibile la UPboard è stato utilizzato
+un normale computer che utilizza linux come OS.
+
+\section{Drive}
+
+Il drive che guida il motore in PWM è un Microphase MicroOne, con
+le seguenti specifiche: 
+
+\begin{comment}
+INSERIRE TABELLA
+\end{comment}
+
+Il drive è collegato al motore attraverso due connettori. Uno di potenza,
+attraverso cui passano le fasi della PWM, il ground e la linea che
+disattiva il freno integrato nel motore. L'altro responsabile della
+ricezione del feedback di posizione da parte dell'encoder incrementale
+e dei sensori di Hall. 
+
+Sul drive sono anche presenti due attacchi RJ45 che il drive usa per
+comunicare attraverso connessione seriale. 
+
+\section{Convertitore Moxa e adattatore PCAN}
+
+Per connettere il drive ai due computer utilizzati, uno per la programmazione
+dello stesso e uno per il controllo, si usano due connettori da usb
+a seriale
+
+\subsection{MOXA}
+
+Per programmare parametri e registri del drive è necessario utilizzare
+un software proprietario (di cui si parlerà nel dettaglio nel capitolo
+2) che comunica attraverso una connessione seriale rs 422 resa possibile
+da un convertitore moxa
+
+\begin{comment}
+INSERIRE IMMAGINE
+\end{comment}
+
+
+\subsection{PCAN}
+
+Invece la comunicazione con il computer di bordo avviene su bus CAN,
+attraverso l' adattatore PCAN.
+
+\begin{comment}
+INSERIRE IMMAGINE E BIBLIOGRAFIA
+\end{comment}
+
+L' adattatore è dotato di un led che ne comunica lo stato: 
+\begin{itemize}
+\item LED acceso: usb connessa al computer, nessuna comunicazione
+\item LED lampeggia lentamente: adattatore attivo
+\item LED lampeggia velocemente: trasmissione in corso
+\end{itemize}
+
+\section{Adattatori}
+
+Sia il convertitore moxa che il PCAN utilizzano per la connessione
+seriale degli attacchi DB9, di cui solo una parte dei pin è effettivamente
+utilizzata. Questo è un problema in quanto il drive dispone solo di
+attacchi rj45. Per ovviare al problema sono stati cablati a mano due
+adattatori. 
+
+\subsection{Adattatore per MOXA}
+
+Benchè dalla documentazione del convertitore moxa non venga specificato
+su quali pin passi la linea seriale rs422, nella confezione è fornito
+un attacco extra che presenta connessioni ben definite. Utilizzando
+la schematica degli attacchi RJ45 fornita nel datasheet del drive
+è stato cablato a mano un cavo ethernet con un RJ45 da un lato e cavi
+scoperti dall'altro, in modo da poterli connettere con l'attacco fornito.
+
+\begin{comment}
+INSERIRE IMMAGINE E BIBLIOGRAFIA
+\end{comment}
+
+
+\subsection{Adattatore per PCAN}
+
+Anche l' adattatore Peak dispone di un attacco db9, di cui solo 4
+pin vengono utilizzati. Il bus can passa attraverso i pin 2 (Can H)
+e 7 (Can L) %
+\begin{comment}
+controllare pin effettivi
+\end{comment}
+questi due pin devono essere collegati ai pin n. 2 e 3 dell'attacco
+rj45. Questa connessione si effettua tramite un adattatore cablabile
+di facile reperibilità. Quello utilizzato in questo progetto nello
+specifivo è stato acquistato su amazon (link prodotto) ed ha i pin
+dell'attacco rj45 femmina codificati tramite i colori dei cavetti
+che vanno inseriti manualmente nell'attacco db9 femmina, secondo questa
+schematica: 
+
+\begin{comment}
+INSERIRE IMMAGINE E BIBLIOGRAFIA
+\end{comment}
+
+
+\section{Alimentatori}
+
+Per il progetto servono due alimentatori separati, uno di potenza
+(BK precision 9104), che alimenta il controllo PWM a 48V (nel rover
+l'alimentazione sarà fornita da una batteria a 48V) e uno riservato
+alla parte logica, che alimenta il drive a 24V.
+
+\include{Cap2-software}
+
+\include{Cap3-problematiche}
+
+\chapter*{Conclusioni\aggiungiAIndice{Conclusioni}}
+
+\primalettera{I}l cloud computing è .............
+
+%add to index with the right hyperlink
+\cleardoublepage \phantomsection \addcontentsline{toc}{chapter}{Bibliografia}\bibliographystyle{alpha}
+\phantomsection\addcontentsline{toc}{chapter}{\bibname}\bibliography{bibliografia}
+
+
+\chapter*{Ringraziamenti}
+
+Grazie a Andrea che ha pubblicato il modello, anche se il grosso del
+lavoro era già fatto da Filippo Zangheri!
+
+\end{mainmatter}
+\end{document}
