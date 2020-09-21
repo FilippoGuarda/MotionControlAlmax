@@ -486,8 +486,7 @@ status open
 
 \begin_layout Plain Layout
 
-https://www.peak-system.com/fileadmin/media/linux/files/peak-linux-driver-8.10.2.tar.g
-z
+https://www.peak-system.com/fileadmin/media/linux/index.htm
 \end_layout
 
 \end_inset
@@ -497,7 +496,7 @@ z
 
 \begin_layout Standard
 Per installarli basta decomprimere il file, aprire la cartella su un terminale
- e utilizzare i seguenti comandi: 
+ con i seguenti comandi: 
 \end_layout
 
 \begin_layout Standard
@@ -507,12 +506,7 @@ status open
 
 \begin_layout Plain Layout
 
-$ make clear
-\end_layout
-
-\begin_layout Plain Layout
-
-$ sudo make
+$ make
 \end_layout
 
 \begin_layout Plain Layout
@@ -526,7 +520,628 @@ $ sudo make install
 \end_layout
 
 \begin_layout Standard
+Sullo stesso terminale, per attivare i driver, si utilizza: 
+\end_layout
 
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ sudo modprobe peak_usb
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Modprobe è un comando di linux che aggiunge un modulo al kernel per estendere
+ le sue funzionalità, in questo caso stiamo aggiungendo il modulo can0,
+ necessario per utilizzare una linea seriale CAN e per il funzionamento
+ dell'adattatore.
+ Controlliamo che can0 sia attivo:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ ip link show
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Ip link è un altro comando che ci permette di controllare i dispositivi
+ di rete disponibili e di modificarne le impostazioni.
+ Ora si crea una linea can0, di tipo can, con baudrate a 250k in questo
+ modo: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ sudo ip link set up can0 type can bitrate 250000
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Se vogliamo una baud a 500k basta modificare il bitrate.
+ Ora il led dell'adattatore dovrebbe lampeggiare lentamente, indicando una
+ connessione attiva.
+ Per disabilitare l'adattatore in caso di malfunzionamenti:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ sudo ip link set down can0
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Can-utils
+\end_layout
+
+\begin_layout Standard
+Il primo tentativo di invio di frame CANopen è stato fatto utilizzando can-utils.
+ 
+\end_layout
+
+\begin_layout Standard
+Can-utils è una suite di strumenti di analisi per terminale che comprende
+ candump (log del traffico su linea can0) e cansend (invio di frame can).
+ 
+\end_layout
+
+\begin_layout Standard
+È disponibile sul repository Debian, quindi per installarla basta il comando:
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ sudo apt-get install can-utils
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Per vedere che messaggi passano attraverso la linea can0:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ candump can0
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Per inviare un frame CAN: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ cansend can0 <CAN frame>
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Il CAN frame ha questa forma: <can_id>#<data>
+\end_layout
+
+\begin_layout Description
+CAN_id definisce il nodo che deve ricevere i dati
+\end_layout
+
+\begin_layout Description
+data definisce il contenuto del frame, che a sua volta deve seguire lo standard
+ CANopen
+\end_layout
+
+\begin_layout Standard
+Cansend permette solo di inviare CAN frames codificati in binario o esadecimale,
+ per inviare un frame CANopen è necessario specificare ogni volta il tipo
+ di messaggio inviato (NMT, SDO, PDO) e leggere la risposta al livello più
+ basso.
+ I frame in uscita vengono registrati da candump, ma il drive non risponde,
+ anche a causa dell'assenza di un segnale heartbeat da parte del computer,
+ che potrebbe essere interpretata dal drive come un errore di comunicazione.
+\end_layout
+
+\begin_layout Section
+CANopenSocket
+\end_layout
+
+\begin_layout Standard
+Per ovviare a questo problema è stato utilizzato CANopenSocket, che permette
+ di inviare frames CANopen ad un livello di astrazione più alto, risparmiando
+ tempo ed evitando errori di codifica del messaggio, oltre a generare automatica
+mente un segnale di hearbeat.
+ CANopenSocket inoltre fornisce il controllo della macchina a stati tramite
+ comandi NMT di tipo verbose.
+\end_layout
+
+\begin_layout Standard
+L'installazione di CANopenSocket si esegue clonando il repository in una
+ cartella desiderata: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ git clone https://github.com/CANopenNode/CANopenSocket.git 
+\end_layout
+
+\begin_layout Plain Layout
+
+$ cd CANopenSocket 
+\end_layout
+
+\begin_layout Plain Layout
+
+$ git submodule init 
+\end_layout
+
+\begin_layout Plain Layout
+
+$ git submodule update
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+All'interno del pacchetto sono forniti due strumenti: canopend e canopencomm.
+ 
+\end_layout
+
+\begin_layout Subsection
+canopend
+\end_layout
+
+\begin_layout Standard
+Canopend fornisce un'implementazione di un dispositivo CANopen con funzionalità
+ di master, accessibile all'interno della cartella in cui la suite è installata
+ con:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ cd canopend
+\end_layout
+
+\begin_layout Plain Layout
+
+$ make
+\end_layout
+
+\begin_layout Plain Layout
+
+$ ./app/canopend --help 
+\end_layout
+
+\begin_layout Plain Layout
+
+$ ./app/canopend can0 -i 2 -c " "
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Il primo comando elenca le opzioni possibili di utilizzo con canopend, mentre
+ il secondo è così strutturato: 
+\end_layout
+
+\begin_layout Description
+can0 specifica l'interfaccia utilizzata
+\end_layout
+
+\begin_layout Description
+-i specifica l'indirizzo del nodo che vogliamo creare, se non viene incluso
+ l'indirizzo viene preso dall'object dictionary incluso nella cartella /objDict,
+ può essere qualsiasi indirizzo a parte 1, che è riservato al drive
+\end_layout
+
+\begin_layout Description
+-c abilita l'interfaccia di comando per funzionalità master, impostandolo
+ come stringa vuota (" ") viene usato il socket di default, che ci permette
+ di inviare messaggi agli altri nodi attraverso canopencomm
+\end_layout
+
+\begin_layout Subsection
+canopencomm
+\end_layout
+
+\begin_layout Standard
+Mentre l'ultimo comando di canopend è attivo si apre un altro terminale
+ e a partire dalla cartella principale di CANopenSocket: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ cd canopencomm
+\end_layout
+
+\begin_layout Plain Layout
+
+$ make
+\end_layout
+
+\begin_layout Plain Layout
+
+$ ./canopencomm --help
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Con le opzioni disponibili ora possiamo inviare frame CANopen attraverso
+ l'interfaccia can0.
+ 
+\end_layout
+
+\begin_layout Standard
+Per testarne il funzionamento si può andare a leggere la frequenza dell'heartbea
+t: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ ./canopencomm [1] 4 read 0x1017 0 i16
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Sorgono però una serie di complicazioni: innanzi tutto CANopenSocket permette
+ di inviare frame con standard CiA 301, ma non con il CiA 402 che ci serve
+ a controllare i profili di moto del drive.
+ Sebbene sia possibile andare a modificare l'indirizzo dell'object dictionary
+ che contiene ControlWord e VelocityTarget, il drive non risponde.
+ Inoltre se si esegue un candump della linea seriale, si vede che la comunicazio
+ne viene interrotta dopo circa trenta secondi.
+ Sono state provate diverse soluzioni, ma mentre con un'interfaccia virtuale
+ (vcan0), la comunicazione funziona e non si hanno problemi di alcun genere,
+ non si è trovato niente che potesse risolvere questo problema.
+\end_layout
+
+\begin_layout Section
+Kacanopen
+\begin_inset CommandInset citation
+LatexCommand cite
+key "KITmedical2016"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Non riscontrando successo con CANopenSocket, si è deciso di passare ad una
+ libreria ROS che permettesse di connettersi direttamente con il drive attravers
+o l'adattatore PCAN, e che contenesse al suo interno tutti gli strumenti
+ necessari al controllo di un drive.
+ 
+\end_layout
+
+\begin_layout Standard
+Kacanopen è sembrato un'ottima opzione, in quanto fornisce al suo interno
+ diversi strumenti utili: drivers per la maggior parte degli adattatori
+ usb to CAN, un master CANopen integrato, protocolli SDO, PDO ed NMT facilmente
+ utilizzabili e un bridge ROS, che rende disponibili pubblicare i nodi CANopen
+ come nodi ROS in modo da poterli controllare semplicemente attraverso messaggi
+ del tipo joint_state.
+\end_layout
+
+\begin_layout Standard
+Un altro pregio della libreria è la documentazione estensiva.
+\end_layout
+
+\begin_layout Standard
+L'installazione di Kacanopen si esegue scaricando la libreria da github
+ all'interno del workspace ROS: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ cd <catkin workspace>/src 
+\end_layout
+
+\begin_layout Plain Layout
+
+$ git clone https://github.com/KITmedical/Kacanopen.git 
+\end_layout
+
+\begin_layout Plain Layout
+
+$ cd ..
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+$ catkin_make -DDRIVER=socket
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Studiando la libreria Kacanopen, si sono incontrate due problematiche che
+ non la rendono adatta al progetto.
+ In primo luogo la libreria Kacanopen non è mantenuta, è stata progettata
+ per lavorare con ROS jade, una versione di ROS ormai deprecata e mai aggiornata.
+ 
+\end_layout
+
+\begin_layout Standard
+Nonostante questo la libreria potrebbe comunque funzionare, anche se in
+ maniera leggermente limitata.
+ Infatti la modularità di ros permette a nodi costruiti con una versione
+ precedente di funzionare lo stesso, a patto che la sintasssi dei messaggi
+ sia compatibile con le versioni più recenti, e che si possa eseguire la
+ build della libreria a partire dal codice sorgente attraverso catkin_make.
+ 
+\end_layout
+
+\begin_layout Standard
+Kacanopen funziona anche indipendentemente da ROS, basta utilizzare cmake
+ per eseguire la build.
+ 
+\end_layout
+
+\begin_layout Standard
+Il problema che rende impossibile utilizzare Kacanopen senza una sostanziale
+ riscrittura del codice sono i drivers di cui ha bisogno per funzionare
+ con un adattatore PCAN: il codice è infatti progettato per funzionare con
+ una versione precedente dei drivers.
+ È possibile installare i driver compatibili con: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ wget http://www.peak-system.com/fileadmin/media/linux/files/peak-linux-driver-7.1
+5.2.tar.gz tar -xzf peak-linux-driver-7.15.2.tar.gz 
+\end_layout
+
+\begin_layout Plain Layout
+
+$ mv peak-linux-driver-7.15.2 ~/peak 
+\end_layout
+
+\begin_layout Plain Layout
+
+$ cd ~/peak 
+\end_layout
+
+\begin_layout Plain Layout
+
+$ make
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset citation
+LatexCommand cite
+key "kacanopen2016"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Ma una volta scaricati, non sembra siano compatibili con la versione del
+ sistema operativo, infatti durante il processo di installazione una grossa
+ porzione del codice dà errori.
+ 
+\end_layout
+
+\begin_layout Section
+ros_canopen 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ros_canopen2015"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Un'altra opzione che sembra promettente è la libreria ros_canopen.
+ Parte del progetto ros-industrial
+\begin_inset CommandInset citation
+LatexCommand cite
+key "rosindustrial2020"
+
+\end_inset
+
+, che ha l'obiettivo di estendere le capacità di ROS ad hardware ed applicazioni
+ industriali, ros_canopen è una libreria che fornisce il supporto di dispositivi
+ CANopen all'interno di ROS.
+ 
+\end_layout
+
+\begin_layout Standard
+Questo software fornisce gli stessi strumenti di Kacanopen, ma ha il pregio
+ di essere aggiornato (il mantainer attuale è Mathias Lüdtke, 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://github.com/ipa-mdl
+\end_layout
+
+\end_inset
+
+) e funziona con i drivers can integrati nel kernel linux.
+ 
+\end_layout
+
+\begin_layout Standard
+L'installazione è simile a Kacanopen, all'interno della cartella /src del
+ workspace ROS:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ git clone https://github.com/ros-industrial/ros_canopen
+\end_layout
+
+\begin_layout Plain Layout
+
+$ cd ..
+\end_layout
+
+\begin_layout Plain Layout
+
+$ catkin_make
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+La libreria è composta da diversi strumenti:
+\end_layout
+
+\begin_layout Description
+canopen_master implementazione di un master secondo lo standarc CiA 301,
+ con supporto di sincronizzazione infra-processo.
+ 
+\end_layout
+
+\begin_layout Description
+canopen_chain_node controlla un bus CANopen con uno o più nodi, che sono
+ configurati attraverso un file EDS/DCF
+\end_layout
+
+\begin_layout Description
+canopen_motor_node fornisce un'interfaccia ros_control a motori conformi
+ allo standard CiA 402
+\end_layout
+
+\begin_layout Description
+socketcan_bridge espone i frames CAN ai messaggi ROS e viceversa
+\end_layout
+
+\begin_layout Description
+socketcan_interface fornisce un'interfaccia CAN generica e un'implementazione
+ dei driver basata su socketcan
+\end_layout
+
+\begin_layout Description
+canopen_402 contiene l'implementazione del protocollo CiA 402 DSP
+\end_layout
+
+\begin_layout Description
+can_msgs definizione di messaggio ROS per CAN
+\end_layout
+
+\begin_layout Standard
+Nonostante sia stato eseguito un settaggio delle specifiche del 
 \end_layout
 
 \end_body

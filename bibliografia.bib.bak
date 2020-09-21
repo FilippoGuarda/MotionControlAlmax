@@ -163,4 +163,43 @@
   title  = {Istruzioni Drive Watcher ver. 4.07},
 }
 
+@Manual{Microphase,
+  author = {Microphase},
+  title  = {Micro One Digital, Manuale di Istruzione},
+}
+
+@Manual{PEAK2020,
+  author = {PEAK},
+  date   = {2020-06},
+  title  = {PCAN Driver for Linux v8},
+}
+
+@Online{kacanopen2016,
+  author = {kacanopen},
+  date   = {2016},
+  title  = {Buid instructions},
+  url    = {https://kitmedical.github.io/kacanopen/md_doc_Installation.html},
+}
+
+@Software{KITmedical2016,
+  author = {KITmedical},
+  date   = {2016},
+  title  = {kacanopen},
+  url    = {https://kitmedical.github.io/kacanopen/md_doc_Installation.html},
+}
+
+@Online{rosindustrial2020,
+  author = {ros-industrial},
+  date   = {2020},
+  title  = {ROS INDUSTRIAL},
+  url    = {https://rosindustrial.org/},
+}
+
+@Online{ros_canopen2015,
+  author = {ros_canopen},
+  date   = {2015},
+  title  = {Package Summary},
+  url    = {https://wiki.ros.org/action/info/ros_canopen?action=info},
+}
+
 @Comment{jabref-meta: databaseType:biblatex;}

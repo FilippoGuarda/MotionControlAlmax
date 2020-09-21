@@ -123,7 +123,8 @@ iii
 \end_layout
 
 \begin_layout 9. Dedica
-To everybody
+A Giorgio, per avermi insegnato che prima viene il dovere.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -509,7 +510,7 @@ Sul drive sono anche presenti due attacchi RJ45 che il drive usa per comunicare
 \end_layout
 
 \begin_layout Section
-Connettori
+Convertitore Moxa e adattatore PCAN
 \end_layout
 
 \begin_layout Standard
@@ -547,7 +548,7 @@ PCAN
 
 \begin_layout Standard
 Invece la comunicazione con il computer di bordo avviene su bus CAN, attraverso
- il connettore PCAN.
+ l' adattatore PCAN.
 \end_layout
 
 \begin_layout Standard
@@ -564,7 +565,7 @@ INSERIRE IMMAGINE E BIBLIOGRAFIA
 \end_layout
 
 \begin_layout Standard
-Il connettore è dotato di un led che ne comunica lo stato: 
+L' adattatore è dotato di un led che ne comunica lo stato: 
 \end_layout
 
 \begin_layout Itemize
@@ -572,7 +573,7 @@ LED acceso: usb connessa al computer, nessuna comunicazione
 \end_layout
 
 \begin_layout Itemize
-LED lampeggia lentamente: connettore attivo
+LED lampeggia lentamente: adattatore attivo
 \end_layout
 
 \begin_layout Itemize
@@ -622,7 +623,7 @@ Adattatore per PCAN
 \end_layout
 
 \begin_layout Standard
-Anche il connettore Peak dispone di un attacco db9, di cui solo 4 pin vengono
+Anche l' adattatore Peak dispone di un attacco db9, di cui solo 4 pin vengono
  utilizzati.
  Il bus can passa attraverso i pin 2 (Can H) e 7 (Can L) 
 \begin_inset Note Comment
@@ -713,12 +714,100 @@ status open
 
 
 \backslash
-primalettera{I}
+primalettera{C}
 \end_layout
 
 \end_inset
 
-l cloud computing è .............
+onfrontando le possibili opzioni, l'approccio migliore per il completamento
+ del progetto sembra essere quello di sfruttare la libreria ros_canopen.
+ 
+\end_layout
+
+\begin_layout Standard
+Il problema principale è posto dalla mancata comunicazione del computer
+ di bordo con il driver, di cui non si è riuscito a trovare la causa, nonostante
+ estensivi tentativi di debug.
+\end_layout
+
+\begin_layout Standard
+Le particolari condizioni in cui è stato portato avanti questo progetto
+ a causa del coronavirus (lavoro completamente indipendente, assenza di
+ supporto da parte di personale più qualificato, adattatori "artigianali",
+ mancanza di un laboratorio e strumentazione adeguata...
+ ) ha sicuramente influito negativamente sui suoi risultati, ma con la riapertur
+a dell'università si aprono nuove possibilità di risolvere le problematiche
+ incontrate finora.
+ 
+\end_layout
+
+\begin_layout Section
+Debugging del connettore rj45
+\end_layout
+
+\begin_layout Standard
+Durante il lockdown e nei mesi successivi, in mancanza di un oscilloscopio
+ e di un analizzatore logico, è stato impossibile accertarsi che il drive
+ ricevesse effettivamente i segnali inviati.
+ Benchè il connettore PCAN disponga di un led che varia la frequenza di
+ lampeggiamento in base alla presenza o meno di traffico sul bus, potrebbero
+ esserci dei problemi di interferenza o altre complicazioni nel trasporto
+ dell'informazione al drive.
+ 
+\end_layout
+
+\begin_layout Standard
+Per prima cosa sarebbe quindi opportuno accertarsi dell'effettiva ricezione
+ dei frame CAN da parte del drive, concentrandosi sul controllo a livello
+ di astrazione più alto solo successivamente.
+\end_layout
+
+\begin_layout Standard
+Sarebbe anche opportuno sostituire il drive per accertarsi che i problemi
+ non siano dovuti ad hardware difettoso.
+\end_layout
+
+\begin_layout Section
+Lavoro con ros_canopen
+\end_layout
+
+\begin_layout Standard
+Benchè non sia stato possibile terminare il lavoro in tempo utile, ritengo
+ che la strada migliore per completare il progetto passi attraverso ros_canopen.
+ La documentazione è abbastanza completa, anche se ridotta, e nel caso più
+ disperato sarebbe sempre possibile contattare il mantainer per chiarimenti
+ sul codice sorgente.
+\end_layout
+
+\begin_layout Standard
+La sintassi dei messaggi è definita nel codice sorgente di /can_msgs.
+ 
+\end_layout
+
+\begin_layout Standard
+Configurando i parametri del drive su /canopen_chain_node e /canopen_motor_node
+ e collegando correttamente il bus dovrebbe essere possibile controllare
+ i singoli nodi attraverso un messaggio del tipo joint_state, o in alternativa
+ un interfaccia /ros_control
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ROS2020"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+If everything else fails...
+\end_layout
+
+\begin_layout Standard
+Il drive MicroOne può essere impostato per il controllo di velocità analogico
+ attraverso un segnale 0-24V, con una board arduino (facilmente controllabile
+ con ROS) e con un circuito di pull-up si potrebbe creare un prototipo funzionan
+te, anche se molto meno affidabile e preciso, con poche righe di codice.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -759,8 +848,18 @@ Ringraziamenti
 \end_layout
 
 \begin_layout Standard
-Grazie a Andrea che ha pubblicato il modello, anche se il grosso del lavoro
- era già fatto da Filippo Zangheri!
+Grazie al professor Andrea Tilli per avermi fatto da relatore nonostante
+ il poco preavviso, ai ragazzi di AlmaX, in particolare a Giosuè, per avermi
+ introdotto ad un progetto interessante e pieno di sfide.
+\end_layout
+
+\begin_layout Standard
+Grazie ad AlmaAutomotive per aver fornito l'hardware, a Siboni per i motori,
+ i drives e il software DriveWatcher.
+\end_layout
+
+\begin_layout Standard
+Alla mia famiglia 
 \end_layout
 
 \begin_layout Standard
