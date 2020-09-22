@@ -72,7 +72,6 @@ Preamble
 
 % --- Page geometry --- %
 \usepackage{geometry}
-\usepackage{url}
 \geometry{
 	verbose,a4paper,lmargin=0.17\paperwidth,
 	rmargin=0.1\paperwidth
@@ -98,6 +97,7 @@ Preamble
 \usepackage{amsmath,amsfonts,amssymb,amsthm,multicol}
 \usepackage{epsfig,verbatim}
 \usepackage{ifthen}
+
 
 % --- Big letters at the beginning of chapters --- %
 % "ptmri" is the italic version of "ptmr"

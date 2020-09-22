@@ -26,14 +26,14 @@
 \output_sync 0
 \bibtex_command bibtex
 \index_command default
-\float_placement h
+\float_placement H
 \paperfontsize 12
 \spacing onehalf
 \use_hyperref true
-\pdf_title "Cloud Migration"
-\pdf_author "Andrea Decorte"
-\pdf_subject "Cloud Computing"
-\pdf_keywords "cloud, SCE, migration, enterprise, IBM"
+\pdf_title "Motion Control Almax"
+\pdf_author "Filippo Guarda"
+\pdf_subject "motion control of a bldc motor"
+\pdf_keywords "motion control, ROS, CANopen, AlmaX, rover, BLDC motor"
 \pdf_bookmarks true
 \pdf_bookmarksnumbered false
 \pdf_bookmarksopen true
@@ -321,7 +321,7 @@ a dal 2014 in Polonia.
  
 \begin_inset CommandInset citation
 LatexCommand cite
-key "rules"
+key "Bogusz2020"
 
 \end_inset
 
@@ -348,8 +348,25 @@ La capacità del rover di interagire con un pannello di controllo fisico
 \end_layout
 
 \begin_layout Standard
-L'argomento di questa tesi è il benchmark del motion control del Rover.
- 
+Inserito nel contesto più ampio dello sviluppo del rover, l'argomento di
+ questa tesi è il benchmark della parte di motion control.
+\end_layout
+
+\begin_layout Standard
+Tutti i materiali e la documentazione inclusi in questa tesi (manuali, drivers,
+ immagini, bibliografia e file lyx e latex) sono disponibili su github al
+ link 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://github.com/FilippoGuarda/MotionControlAlmax
+\end_layout
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Section
@@ -357,13 +374,57 @@ Pipeline
 \end_layout
 
 \begin_layout Standard
-I motori BLDC forniti sono Siboni ProPlanet S60 ed S40 dotati di freno integrato
- ed encoder incrementale, ognuno controllato da un drive MicroPhase MicroOne,
- che riceve in broadcast istruzioni attraverso un seriale CAN.
- Le istruzioni sono codificate in CANopen da un adattatore Peak Usb collegato
- a un computer di bordo su cui è installato ROS (Robot Operative System),
- il quale a sua volta riceve messaggi da una base station sulla quale è
- sempre installato ROS.
+L'obiettivo di questa tesi è di permettere ad una base station di controllare
+ i motori BLDC a bordo del rover attraverso messaggi in cui è specificato
+ un target di velocità da raggiungere, il quale viene tradotto in un comando
+ leggibile dal drive che si occupa di raggiungerlo controllando il motore
+ in PWM, con curve di accelerazione definite a priori.
+\end_layout
+
+\begin_layout Standard
+Il drive a sua volta riceve un feedback dall'encoder del motore e deve inviare
+ al computer di bordo la conferma di effettivo raggiungimento del target
+ o, in alternativa, della presenza di errori.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename immagini/pipeline.png
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Pipeline del Motion Control
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -379,11 +440,46 @@ TODO inserire immagine
 .
 \end_layout
 
+\begin_layout Section
+Capitolo 1
+\end_layout
+
 \begin_layout Standard
-Nel capitolo 1 si studieranno nello specifico l'hardware e i metodi utilizzati
- per connettere i diversi elementi del progetto, nel capitolo 2 si studierà
- il software necessario a permettere la comunicazione tra i componenti.
- Nel capitolo 3 si elencheranno le problematiche incontrate.
+Nel primo capitolo si analizzeranno i componenti hardware che fanno parte
+ del motion control del Rover: motore, drive, adattatori e alimentatori.
+\end_layout
+
+\begin_layout Standard
+Si mostrerà inoltre il corretto cablaggio degli adattatori che connettono
+ il drive al computer di bordo, al motore e al PC windows necessario per
+ la programmazione iniziale dei suoi parametri.
+ 
+\end_layout
+
+\begin_layout Section
+Capitolo 2
+\end_layout
+
+\begin_layout Standard
+Il secondo capitolo è dedicato ad una introduzione a ROS e CANopen, il primo
+ un middleware specifico per la robotica e il secondo uno standard di comunicazi
+one necessario a controllare il drive.
+ 
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Software
+\end_layout
+
+\begin_layout Standard
+Nel terzo capitolo si elencheranno i diversi strumenti utilizzati nei successivi
+ tentativi di comunicare con il drive, partendo da quelli a livello più
+ alto, fino ad arrivare al candidato più promettente per eseguire un bridging
+ efficace tra i messaggi di ROS e i frame CANopen.
  
 \end_layout
 
@@ -411,15 +507,168 @@ primalettera{O}
 bbiettivo del progetto è il controllo di un motore BLDC, in questo caso
  i motori forniti sono Siboni S60 ed S40.
  Questi motori hanno le seguenti specifiche, che ci saranno utili più tardi
- per inserirle nei parametri del drive: 
+ per inserirle nei parametri del drive
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Siboni2020"
+
+\end_inset
+
+: 
 \end_layout
 
 \begin_layout Standard
-\begin_inset Note Comment
+\begin_inset Float table
+placement H
+wide false
+sideways false
 status open
 
 \begin_layout Plain Layout
-INSERIRE TABELLA
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="6" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Tensione di alimentazione
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+32V
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Potenza nominale
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+400W
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Coppia di stallo
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.37Nm
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Corrente di stallo
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+9.40A
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Velocità nominale
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3000rpm
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Momento di inerzia rotorico
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.30
+\begin_inset Formula $kg*m^{2}x10^{-4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Specifiche principali del motore Siboni ProPlanet S060 2B305
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -428,25 +677,82 @@ INSERIRE TABELLA
 \end_layout
 
 \begin_layout Standard
-I motori dispongono di connettori di tipo 
-\begin_inset Note Comment
+I motori dispongono di connettori di tipo molex a 6 e 12 pin, con la seguenti
+ schematiche
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Microphase"
+
+\end_inset
+
+: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
 status open
 
 \begin_layout Plain Layout
-INSERIRE TIPOLOGIA CONNETTORI
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename immagini/cavo-encoder.png
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Collegamento cavo encoder
 \end_layout
 
 \end_inset
 
-, con la seguente schematica: 
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-\begin_inset Note Comment
+\begin_inset Float figure
+placement H
+wide false
+sideways false
 status open
 
 \begin_layout Plain Layout
-INSERIRE IMMAGINE
+\align center
+\begin_inset Graphics
+	filename immagini/cavo-motore.png
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Collegamento cavo motore
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \end_inset
@@ -459,8 +765,14 @@ Computer di bordo
 \end_layout
 
 \begin_layout Standard
-Nel rover, il computer di bordo è una UPboard, molto comoda in quanto estremamen
-te modulare e dotata di moduli extra.
+Nel rover, il computer di bordo è una UPboard
+\begin_inset CommandInset citation
+LatexCommand cite
+key "UPboard,UPboard2020"
+
+\end_inset
+
+, molto comoda in quanto estremamente modulare e dotata di moduli extra.
  Tra i muduli disponibili è presente anche uno dotato di porte seriali CAN
  e rs422, molto utile ai fini del progetto in quanto riduce il numero di
  connettori extra.
@@ -477,16 +789,153 @@ Drive
 \end_layout
 
 \begin_layout Standard
-Il drive che guida il motore in PWM è un Microphase MicroOne, con le seguenti
- specifiche: 
+Il drive che guida il motore in PWM è un Microphase Micro Digital One, con
+ le seguenti specifiche
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Microphase2020"
+
+\end_inset
+
+: 
 \end_layout
 
 \begin_layout Standard
-\begin_inset Note Comment
+\begin_inset Float table
+placement H
+wide false
+sideways false
 status open
 
 \begin_layout Plain Layout
-INSERIRE TABELLA
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Range di tensione
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+19-84V
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Corrente nominale
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+10A
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Corrente di picco
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+20A
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Potenza nominale
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+580W
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Potenza di picco
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1060W
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Specifiche principali del drive MicroDigitalOne
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \end_inset
@@ -515,7 +964,7 @@ Convertitore Moxa e adattatore PCAN
 
 \begin_layout Standard
 Per connettere il drive ai due computer utilizzati, uno per la programmazione
- dello stesso e uno per il controllo, si usano due connettori da usb a seriale
+ dello stesso e uno per il controllo, si usano due connettori da usb a seriale:
 \end_layout
 
 \begin_layout Subsection
@@ -526,20 +975,9 @@ MOXA
 Per programmare parametri e registri del drive è necessario utilizzare un
  software proprietario (di cui si parlerà nel dettaglio nel capitolo 2)
  che comunica attraverso una connessione seriale rs 422 resa possibile da
- un convertitore moxa
-\end_layout
-
-\begin_layout Standard
-\begin_inset Note Comment
-status open
-
-\begin_layout Plain Layout
-INSERIRE IMMAGINE
-\end_layout
-
-\end_inset
-
-
+ un convertitore moxa.
+ Il convertitore è dotato di tre led di stato: uno che indica l'accensione,
+ uno che si illumina in trasmissione e uno che si illumina in ricezione.
 \end_layout
 
 \begin_layout Subsection
@@ -548,24 +986,18 @@ PCAN
 
 \begin_layout Standard
 Invece la comunicazione con il computer di bordo avviene su bus CAN, attraverso
- l' adattatore PCAN.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Note Comment
-status open
-
-\begin_layout Plain Layout
-INSERIRE IMMAGINE E BIBLIOGRAFIA
-\end_layout
+ l' adattatore PCAN
+\begin_inset CommandInset citation
+LatexCommand cite
+key "PEAK2019"
 
 \end_inset
 
-
+.
 \end_layout
 
 \begin_layout Standard
-L' adattatore è dotato di un led che ne comunica lo stato: 
+L'adattatore è dotato di un led che ne comunica lo stato: 
 \end_layout
 
 \begin_layout Itemize
@@ -585,7 +1017,7 @@ Adattatori
 \end_layout
 
 \begin_layout Standard
-Sia il convertitore moxa che il PCAN utilizzano per la connessione seriale
+Sia il convertitore MOXA che il PCAN utilizzano per la connessione seriale
  degli attacchi DB9, di cui solo una parte dei pin è effettivamente utilizzata.
  Questo è un problema in quanto il drive dispone solo di attacchi rj45.
  Per ovviare al problema sono stati cablati a mano due adattatori.
@@ -601,16 +1033,86 @@ Benchè dalla documentazione del convertitore moxa non venga specificato
  su quali pin passi la linea seriale rs422, nella confezione è fornito un
  attacco extra che presenta connessioni ben definite.
  Utilizzando la schematica degli attacchi RJ45 fornita nel datasheet del
- drive è stato cablato a mano un cavo ethernet con un RJ45 da un lato e
- cavi scoperti dall'altro, in modo da poterli connettere con l'attacco fornito.
+ drive
+\begin_inset CommandInset citation
+LatexCommand cite
+key "MicrophaseInterface"
+
+\end_inset
+
+ è stato cablato a mano un cavo ethernet con un RJ45 da un lato e cavi scoperti
+ dall'altro, in modo da poterli connettere con l'attacco fornito.
 \end_layout
 
 \begin_layout Standard
-\begin_inset Note Comment
+\begin_inset Float figure
+placement H
+wide false
+sideways false
 status open
 
 \begin_layout Plain Layout
-INSERIRE IMMAGINE E BIBLIOGRAFIA
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename immagini/adattatore-MOXA.png
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Adattatore db9-rj45 insieme al MOXA
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename immagini/connessioni-moxa.png
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Schematica adattatore db9-rj45 per MOXA
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \end_inset
@@ -623,34 +1125,107 @@ Adattatore per PCAN
 \end_layout
 
 \begin_layout Standard
-Anche l' adattatore Peak dispone di un attacco db9, di cui solo 4 pin vengono
+Anche l'adattatore PCAN dispone di un attacco db9, di cui solo 4 pin vengono
  utilizzati.
- Il bus can passa attraverso i pin 2 (Can H) e 7 (Can L) 
-\begin_inset Note Comment
+ Il bus can passa attraverso i pin 2 (Can H) e 7 (Can L) questi due pin
+ devono essere collegati ai pin n.
+ 2 e 3 dell'attacco rj45.
+ Questa connessione si effettua tramite un adattatore cablabile a mano di
+ facile reperibilità.
+ Quello utilizzato in questo progetto nello specifico è stato acquistato
+ su Amazon (
+\begin_inset Flex URL
 status open
 
 \begin_layout Plain Layout
-controllare pin effettivi
+
+https://www.amazon.it/gp/product/B00006IRQA/ref=ppx_yo_dt_b_asin_title_o01_s00?ie=
+UTF8&psc=1
 \end_layout
 
 \end_inset
 
-questi due pin devono essere collegati ai pin n.
- 2 e 3 dell'attacco rj45.
- Questa connessione si effettua tramite un adattatore cablabile di facile
- reperibilità.
- Quello utilizzato in questo progetto nello specifivo è stato acquistato
- su amazon (link prodotto) ed ha i pin dell'attacco rj45 femmina codificati
- tramite i colori dei cavetti che vanno inseriti manualmente nell'attacco
- db9 femmina, secondo questa schematica: 
+) ed ha i pin dell'attacco rj45 femmina codificati tramite i colori dei
+ cavetti che vanno inseriti manualmente nell'attacco db9 femmina, secondo
+ questa schematica
+\begin_inset CommandInset citation
+LatexCommand cite
+key "PEAK2019"
+
+\end_inset
+
+: 
 \end_layout
 
 \begin_layout Standard
-\begin_inset Note Comment
+\begin_inset Float figure
+placement H
+wide false
+sideways false
 status open
 
 \begin_layout Plain Layout
-INSERIRE IMMAGINE E BIBLIOGRAFIA
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename immagini/PCAN-db9-to-rj45.png
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Schematica adattatore db9-rj45 per PCAN
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename immagini/adattatore-e-PCAN.png
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Adattatore db9-rj45 insieme al PCAN
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \end_inset
@@ -739,6 +1314,50 @@ Le particolari condizioni in cui è stato portato avanti questo progetto
 a dell'università si aprono nuove possibilità di risolvere le problematiche
  incontrate finora.
  
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename immagini/setup-hardware.png
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Ambiente di lavoro in cui il progetto è stato portato avanti
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
@@ -763,8 +1382,12 @@ Per prima cosa sarebbe quindi opportuno accertarsi dell'effettiva ricezione
 \end_layout
 
 \begin_layout Standard
-Sarebbe anche opportuno sostituire il drive per accertarsi che i problemi
- non siano dovuti ad hardware difettoso.
+Inoltre l'adattatore PCAN smette di funzionare dopo un certo lasso di tempo,
+ è da capire se il problema sia dovuto ad una incompatibilità con il sistema
+ operativo o se il prodotto sia difettoso, la seconda ipotesi si può accantonare
+ semplicemente utilizzando un adattatore PCAN differente, per la prima invece
+ il problema sarebbe di più difficile soluzione.
+ 
 \end_layout
 
 \begin_layout Section
@@ -772,7 +1395,7 @@ Lavoro con ros_canopen
 \end_layout
 
 \begin_layout Standard
-Benchè non sia stato possibile terminare il lavoro in tempo utile, ritengo
+Benchè non sia stato possibile terminare il lavoro in tempo utile, si ritiene
  che la strada migliore per completare il progetto passi attraverso ros_canopen.
  La documentazione è abbastanza completa, anche se ridotta, e nel caso più
  disperato sarebbe sempre possibile contattare il mantainer per chiarimenti
@@ -803,10 +1426,11 @@ If everything else fails...
 \end_layout
 
 \begin_layout Standard
-Il drive MicroOne può essere impostato per il controllo di velocità analogico
- attraverso un segnale 0-24V, con una board arduino (facilmente controllabile
- con ROS) e con un circuito di pull-up si potrebbe creare un prototipo funzionan
-te, anche se molto meno affidabile e preciso, con poche righe di codice.
+Il drive Micro Digital One può essere impostato per il controllo di velocità
+ analogico attraverso un segnale +-10V, con una board arduino (facilmente
+ controllabile con ROS) e con un circuito di pull-up si potrebbe creare
+ un prototipo funzionante, anche se molto meno affidabile e preciso, con
+ poche righe di codice.
  
 \end_layout
 
@@ -836,7 +1460,7 @@ addcontentsline{toc}{chapter}{Bibliografia}
 \begin_inset CommandInset bibtex
 LatexCommand bibtex
 bibfiles "bibliografia"
-options "bibtotoc,alpha"
+options "alpha"
 
 \end_inset
 
@@ -859,7 +1483,10 @@ Grazie ad AlmaAutomotive per aver fornito l'hardware, a Siboni per i motori,
 \end_layout
 
 \begin_layout Standard
-Alla mia famiglia 
+Alla mia famiglia ed ai miei amici per il supporto continuativo nei momenti
+ più frustranti, in particolare ad Adileo che in un'ora è riuscito a spiegarmi
+ quello che in una settimana non avevo capito da solo.
+ 
 \end_layout
 
 \begin_layout Standard
