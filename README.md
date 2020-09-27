@@ -1,5 +1,11 @@
-Motion-Control-Almax
+unibo-thesis-lyx
 ================
 
-Tesi triennale, incentrata sul motion control di un motore BLDC in ambito AlmaX, il progetto di sviluppo di un Rover da parte dell'università di Bologna per partecipare all'European Rover Challenge (ERC).
-Si includono insieme al testo il codice sorgente latex, i materiali utili, le immagini e i driver utilizzati.
+A Lyx (2.x, should also work with previous versions) layout for writing a Thesis at University of Bologna (specifically DEIS - Department of Engineering).
+
+How to use
+==========
+
+You should just open the tesi.lyx file and start writing.
+It's good practice to split each chapter in a separate file, as shown in Cap2.lyx
+A basic bibliography file is also included, you could manage it for example with JabRef.

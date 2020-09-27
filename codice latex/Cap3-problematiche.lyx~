@@ -1,0 +1,1576 @@
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass deistesi
+\use_default_options true
+\maintain_unincluded_children false
+\language italian
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize 12
+\spacing onehalf
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 2
+\paperpagestyle plain
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Chapter
+Architettura e componenti Software
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+primalettera{P}
+\end_layout
+
+\end_inset
+
+er permettere al computer di bordo di inviare comandi al drive e ricevere
+ un feedback, è necessario trovare un modo di codificare i messaggi ROS
+ in CANframes.
+\end_layout
+
+\begin_layout Standard
+Benchè la comunicazione non sia ancora possibile, in questo capitolo si
+ elencheranno i passaggi necessari ad eseguire il setup del drive, dell'ambiente
+ ROS, delle librerie e strumenti aggiuntivi necessari.
+ 
+\end_layout
+
+\begin_layout Subsection
+Setup drive 
+\end_layout
+
+\begin_layout Standard
+I parametri statici che definiscono il funzionamento del drive devono essere
+ programmati attraverso una connessione seriale rs422, possibile attraverso
+ il convertitore moxa.
+\end_layout
+
+\begin_layout Standard
+Per eseguire il setup del drive è stato necessario utilizzare Drive Watcher,
+ un software proprietario fornito dal produttore dei motori, questa suite
+ sfortunatamente è compatibile solo con windows xp e necessita si un port
+ non disponibile in una virtual machine il che rende impossibile utilizzarla
+ senza avere il sistema operativo installato.
+ È stato quindi necessario utilizzare una vecchio computer esclusivamente
+ per programmare i parametri del drive.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+Abilitare Moxa
+\end_layout
+
+\begin_layout Standard
+Per abilitare il convertitore moxa è necessario per prima cosa installare
+ il driver da CD o file .zip della Moxa, il programma è presente all’interno
+ della cartella riferita al convertitore Moxa che si possiede.
+ Bisogna entrare nella cartella Software, e installare file .exe.
+ 
+\end_layout
+
+\begin_layout Standard
+Per abilitare il port è necessario andare in Pannello di controllo > Sistema
+ > Hardware > Gestione Periferiche.
+\end_layout
+
+\begin_layout Enumerate
+\noindent
+\align left
+Da Porte (COM e LPT) cliccare col tasto destro su MOXA USB e aprire Proprietà;
+ in Port Settings impostare i seguenti valori : Baud Rate = 9600, Data its
+ = 8, Parity = None, Stop bits = 1, Flowcontrol = None.
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename immagini/installazione moxa1.png
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Installazione moxa, parte 1
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\noindent
+\align left
+Da Schede Seriali Multiport cliccare col tasto destro su Uport 1130I e aprire
+ Proprietà; in Ports Configuration aprire Port Setting della COM in uso
+ dalla Moxa e impostare : Fast Flush su Enable e Interface su RS-422.
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename immagini/installazione moxa2.png
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Installazione moxa, parte2
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Installazione Drive Watcher
+\end_layout
+
+\begin_layout Standard
+Per installare il software basta semplicemente estrarre e aprire il file
+ Setup-DriveWatcher-407.exe.
+ 
+\end_layout
+
+\begin_layout Standard
+Prima di modificare i parametri bisogna accertarsi che la moxa sia connessa
+ al driver e che la parte logica del driver sia alimentata a 24V, con l'uscita
+ negativa dell'alimentatore messa a terra.
+ 
+\end_layout
+
+\begin_layout Standard
+Si esegue un settaggio della comunicazione attraverso la modalità "Communication
+ Settings", impostando la ComPort designata in precedenza e cercando il
+ nodo attivo attraverso il "search node tool".
+ L'ultimo tool menzionato eseguirà uno sweep completo di tutti i nodi disponibil
+i, indicando quelli attivi con un colore differente.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename immagini/node sweep.png
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Communication Settings e Search Node Tool
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Una volta impostato il nodo si controlla che la connessione sia attiva attravers
+o il tool "ComPort communication test" (icona a cacciavite).
+ 
+\end_layout
+
+\begin_layout Subsection
+Programmazione dei parametri
+\end_layout
+
+\begin_layout Standard
+I parametri si possono visualizzare nella sezione "Parameters configuration",
+ ogni parametro dispone di una descrizione a lato, quindi in questo documento
+ non si elencheranno tutti, ma solo i più importanti ai fini del progetto.
+ Per farsi un'idea più dettagliata si possono consultare il manuale Siboni
+ "Istruzioni Drive Watcher" 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Siboni2018"
+
+\end_inset
+
+ e quello completo del drive Microphase "Micro Digital One", capitolo 9.
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Microphase"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename immagini/parametri.png
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+lo strumento Parameters Configuration
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+Fare particolare attenzione ai parametri: 
+\end_layout
+
+\begin_layout Description
+C7 numero nodo = 1 di default
+\end_layout
+
+\begin_layout Description
+C9 modo di funzionamento del drive, impostato a 5 per il CANopen
+\end_layout
+
+\begin_layout Description
+D8 selezione del motore utilizzato, nel nostro caso brushless sinusoidale
+\end_layout
+
+\begin_layout Description
+N1 bitrate CAN, impostiamo a 5 per 250Kbaud, 6 per 500Kbaud
+\end_layout
+
+\begin_layout Section
+Setup ROS
+\end_layout
+
+\begin_layout Standard
+L'installazione di ROS varia in base alle release.
+ In questo progetto è stata utilizzata Melodic Morenia, ma in base alla
+ distro di linux installata sul computer di bordo potrebbe essere necessario
+ installare una release differente.
+ Ritenendo inutile descrivere il processo di installazione di una singola
+ versione quando è disponibile online ampia documentazione a riguardo, si
+ include qui il link al sito ufficiale di ROS, dove sono indicati tutti
+ gli step necessari per le varie piattaforme: 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://wiki.ros.org/ROS/Installation
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Successivamente, si utilizza Catkin per creare un workspace in cui sviluppare
+ il progetto:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ mkdir -p ~/catkin_ws/src 
+\end_layout
+
+\begin_layout Plain Layout
+
+$ cd ~/catkin_ws/ 
+\end_layout
+
+\begin_layout Plain Layout
+
+$ catkin_make
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Per rendere utilizzabili con roscd e roslaunch i pacchetti aggiuntivi che
+ installeremo nel workspace, è necessario aggiungere all'origine il nuovo
+ file setup.*sh
+\end_layout
+
+\begin_layout Standard
+Dall'interno della cartella catkin_ws, si scrive nel terminale:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ source devel/setup.bash
+\end_layout
+
+\begin_layout Plain Layout
+
+$ echo $ROS_PACKAGE_PATH /home/youruser/catkin_ws/src:/opt/ros/
+\end_layout
+
+\begin_layout Plain Layout
+
+kinetic/share
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Questo comando, insieme a catkin_make, andrà ripetuto per sicurezza ad ogni
+ utilizzo del workspace e soprattuto dopo l'installazione di nuovi pacchetti.
+ 
+\end_layout
+
+\begin_layout Section
+Setup PCAN
+\end_layout
+
+\begin_layout Standard
+Benchè dei driver per adattatore PCAN siano installati di default nel kernel
+ linux, per cui i canali CAN sono gestiti come dispositivi netdev, per utilizzar
+e il software di visualizzazione pcan_view e l'API pcan_basic è necessario
+ installare i driver proprietari.
+ 
+\end_layout
+
+\begin_layout Standard
+I driver sono disponibili sul sito della PEAK system all'indirizzo 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://www.peak-system.com/fileadmin/media/linux/index.htm
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Per installarli basta decomprimere il file, aprire la cartella su un terminale
+ con i seguenti comandi: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ make
+\end_layout
+
+\begin_layout Plain Layout
+
+$ sudo make install
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Sullo stesso terminale, per attivare i driver, si utilizza: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ sudo modprobe peak_usb
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Modprobe è un comando di linux che aggiunge un modulo al kernel per estendere
+ le sue funzionalità, in questo caso stiamo aggiungendo il modulo can0,
+ necessario per utilizzare una linea seriale CAN e per il funzionamento
+ dell'adattatore.
+ Controlliamo che can0 sia attivo:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ ip link show
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Ip link è un altro comando che ci permette di controllare i dispositivi
+ di rete disponibili e di modificarne le impostazioni.
+ Ora si crea una linea can0, di tipo can, con baudrate a 250k in questo
+ modo: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ sudo ip link set up can0 type can bitrate 250000
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Se vogliamo una baud a 500k basta modificare il bitrate.
+ Ora il led dell'adattatore dovrebbe lampeggiare lentamente, indicando una
+ connessione attiva.
+ Per disabilitare l'adattatore in caso di malfunzionamenti:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ sudo ip link set down can0
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Can-utils
+\end_layout
+
+\begin_layout Standard
+Il primo tentativo di invio di frame CANopen è stato fatto utilizzando can-utils.
+ 
+\end_layout
+
+\begin_layout Standard
+Can-utils è una suite di strumenti di analisi per terminale che comprende
+ candump (log del traffico su linea can0) e cansend (invio di frame can).
+ 
+\end_layout
+
+\begin_layout Standard
+È disponibile sul repository Debian, quindi per installarla basta il comando:
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ sudo apt-get install can-utils
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Per vedere che messaggi passano attraverso la linea can0:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ candump can0
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Per inviare un frame CAN: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ cansend can0 <CAN frame>
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Il CAN frame ha questa forma: <can_id>#<data>
+\end_layout
+
+\begin_layout Description
+CAN_id definisce il nodo che deve ricevere i dati
+\end_layout
+
+\begin_layout Description
+data definisce il contenuto del frame, che a sua volta deve seguire lo standard
+ CANopen
+\end_layout
+
+\begin_layout Standard
+Cansend permette solo di inviare CAN frames codificati in binario o esadecimale,
+ per inviare un frame CANopen è necessario specificare ogni volta il tipo
+ di messaggio inviato (NMT, SDO, PDO) e leggere la risposta al livello più
+ basso.
+ I frame in uscita vengono registrati da candump, ma il drive non risponde,
+ anche a causa dell'assenza di un segnale heartbeat da parte del computer,
+ che potrebbe essere interpretata dal drive come un errore di comunicazione.
+\end_layout
+
+\begin_layout Section
+CANopenSocket
+\end_layout
+
+\begin_layout Standard
+Per ovviare a questo problema è stato utilizzato CANopenSocket, che permette
+ di inviare frames CANopen ad un livello di astrazione più alto, risparmiando
+ tempo ed evitando errori di codifica del messaggio, oltre a generare automatica
+mente un segnale di hearbeat.
+ CANopenSocket inoltre fornisce il controllo della macchina a stati tramite
+ comandi NMT di tipo verbose.
+\end_layout
+
+\begin_layout Standard
+L'installazione di CANopenSocket si esegue clonando il repository in una
+ cartella desiderata: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ git clone https://github.com/CANopenNode/CANopenSocket.git 
+\end_layout
+
+\begin_layout Plain Layout
+
+$ cd CANopenSocket 
+\end_layout
+
+\begin_layout Plain Layout
+
+$ git submodule init 
+\end_layout
+
+\begin_layout Plain Layout
+
+$ git submodule update
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+All'interno del pacchetto sono forniti due strumenti: canopend e canopencomm.
+ 
+\end_layout
+
+\begin_layout Subsection
+canopend
+\end_layout
+
+\begin_layout Standard
+Canopend fornisce un'implementazione di un dispositivo CANopen con funzionalità
+ di master, accessibile all'interno della cartella in cui la suite è installata
+ con:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ cd canopend
+\end_layout
+
+\begin_layout Plain Layout
+
+$ make
+\end_layout
+
+\begin_layout Plain Layout
+
+$ ./app/canopend --help 
+\end_layout
+
+\begin_layout Plain Layout
+
+$ ./app/canopend can0 -i 2 -c " "
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Il primo comando elenca le opzioni possibili di utilizzo con canopend, mentre
+ il secondo è così strutturato: 
+\end_layout
+
+\begin_layout Description
+can0 specifica l'interfaccia utilizzata
+\end_layout
+
+\begin_layout Description
+-i specifica l'indirizzo del nodo che vogliamo creare, se non viene incluso
+ l'indirizzo viene preso dall'object dictionary incluso nella cartella /objDict,
+ può essere qualsiasi indirizzo a parte 1, che è riservato al drive
+\end_layout
+
+\begin_layout Description
+-c abilita l'interfaccia di comando per funzionalità master, impostandolo
+ come stringa vuota (" ") viene usato il socket di default, che ci permette
+ di inviare messaggi agli altri nodi attraverso canopencomm
+\end_layout
+
+\begin_layout Subsection
+canopencomm
+\end_layout
+
+\begin_layout Standard
+Mentre l'ultimo comando di canopend è attivo si apre un altro terminale
+ e a partire dalla cartella principale di CANopenSocket: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ cd canopencomm
+\end_layout
+
+\begin_layout Plain Layout
+
+$ make
+\end_layout
+
+\begin_layout Plain Layout
+
+$ ./canopencomm --help
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Con le opzioni disponibili ora possiamo inviare frame CANopen attraverso
+ l'interfaccia can0.
+ 
+\end_layout
+
+\begin_layout Standard
+Per testarne il funzionamento si può andare a leggere la frequenza dell'heartbea
+t: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ ./canopencomm [1] 4 read 0x1017 0 i16
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Sorgono però una serie di complicazioni: innanzi tutto CANopenSocket permette
+ di inviare frame con standard CiA 301, ma non con il CiA 402 che ci serve
+ a controllare i profili di moto del drive.
+ Sebbene sia possibile andare a modificare l'indirizzo dell'object dictionary
+ che contiene ControlWord e VelocityTarget, il drive non risponde.
+ Inoltre se si esegue un candump della linea seriale, si vede che la comunicazio
+ne viene interrotta dopo circa trenta secondi.
+ Sono state provate diverse soluzioni, ma mentre con un'interfaccia virtuale
+ (vcan0), la comunicazione funziona e non si hanno problemi di alcun genere,
+ non si è trovato niente che potesse risolvere questo problema.
+\end_layout
+
+\begin_layout Section
+Kacanopen
+\begin_inset CommandInset citation
+LatexCommand cite
+key "KITmedical2016"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Non riscontrando successo con CANopenSocket, si è deciso di passare ad una
+ libreria ROS che permettesse di connettersi direttamente con il drive attravers
+o l'adattatore PCAN, e che contenesse al suo interno tutti gli strumenti
+ necessari al controllo di un drive.
+ 
+\end_layout
+
+\begin_layout Standard
+Kacanopen è sembrato un'ottima opzione, in quanto fornisce al suo interno
+ diversi strumenti utili: drivers per la maggior parte degli adattatori
+ usb to CAN, un master CANopen integrato, protocolli SDO, PDO ed NMT facilmente
+ utilizzabili e un bridge ROS, che rende disponibili pubblicare i nodi CANopen
+ come nodi ROS in modo da poterli controllare semplicemente attraverso messaggi
+ del tipo joint_state.
+\end_layout
+
+\begin_layout Standard
+Un altro pregio della libreria è la documentazione estensiva.
+\end_layout
+
+\begin_layout Standard
+L'installazione di Kacanopen si esegue scaricando la libreria da github
+ all'interno del workspace ROS: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ cd <catkin workspace>/src 
+\end_layout
+
+\begin_layout Plain Layout
+
+$ git clone https://github.com/KITmedical/Kacanopen.git 
+\end_layout
+
+\begin_layout Plain Layout
+
+$ cd ..
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+$ catkin_make -DDRIVER=socket
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Studiando la libreria Kacanopen, si sono incontrate due problematiche che
+ non la rendono adatta al progetto.
+ In primo luogo la libreria Kacanopen non è mantenuta, è stata progettata
+ per lavorare con ROS jade, una versione di ROS ormai deprecata e mai aggiornata.
+ 
+\end_layout
+
+\begin_layout Standard
+Nonostante questo la libreria potrebbe comunque funzionare, anche se in
+ maniera leggermente limitata.
+ Infatti la modularità di ros permette a nodi costruiti con una versione
+ precedente di funzionare lo stesso, a patto che la sintasssi dei messaggi
+ sia compatibile con le versioni più recenti, e che si possa eseguire la
+ build della libreria a partire dal codice sorgente attraverso catkin_make.
+ 
+\end_layout
+
+\begin_layout Standard
+Kacanopen funziona anche indipendentemente da ROS, basta utilizzare cmake
+ per eseguire la build.
+ 
+\end_layout
+
+\begin_layout Standard
+Il problema che rende impossibile utilizzare Kacanopen senza una sostanziale
+ riscrittura del codice sono i drivers di cui ha bisogno per funzionare
+ con un adattatore PCAN: il codice è infatti progettato per funzionare con
+ una versione precedente dei drivers.
+ È possibile installare i driver compatibili con: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ wget http://www.peak-system.com/fileadmin/media/linux/files/
+\end_layout
+
+\begin_layout Plain Layout
+
+peak-linux-driver-7.15.2.tar.gz tar -xzf peak-linux-driver-7.15.2.tar.gz 
+\end_layout
+
+\begin_layout Plain Layout
+
+$ mv peak-linux-driver-7.15.2 ~/peak 
+\end_layout
+
+\begin_layout Plain Layout
+
+$ cd ~/peak 
+\end_layout
+
+\begin_layout Plain Layout
+
+$ make
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset citation
+LatexCommand cite
+key "kacanopen2016"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Ma una volta scaricati, non sembra siano compatibili con la versione del
+ sistema operativo, infatti durante il processo di installazione una grossa
+ porzione del codice dà errori.
+ 
+\end_layout
+
+\begin_layout Standard
+È stato fatto un tentativo di utilizzare Kacanopen con driver aggiornati,
+ aggiungendo i driver peak_usb all'interno di /kacanopen/src/drivers_lgpl
+ e utilizzando poi:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ catkin_make -DDRIVER=peak_usb
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Ma non sono stati ottenuti i risultati sperati.
+\end_layout
+
+\begin_layout Section
+ros_canopen 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ros_canopen2015"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Un'altra opzione che sembra promettente è la libreria ros_canopen.
+ Parte del progetto ros-industrial
+\begin_inset CommandInset citation
+LatexCommand cite
+key "rosindustrial2020"
+
+\end_inset
+
+, che ha l'obiettivo di estendere le capacità di ROS ad hardware ed applicazioni
+ industriali, ros_canopen è una libreria che fornisce il supporto di dispositivi
+ CANopen all'interno di ROS.
+ 
+\end_layout
+
+\begin_layout Standard
+Questo software fornisce gli stessi strumenti di Kacanopen, ma ha il pregio
+ di essere aggiornato (il mantainer attuale è Mathias Lüdtke, 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://github.com/ipa-mdl
+\end_layout
+
+\end_inset
+
+) e funziona con i drivers can integrati nel kernel linux.
+ 
+\end_layout
+
+\begin_layout Standard
+L'installazione è simile a Kacanopen, all'interno della cartella /src del
+ workspace ROS:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ git clone https://github.com/ros-industrial/ros_canopen
+\end_layout
+
+\begin_layout Plain Layout
+
+$ cd ..
+\end_layout
+
+\begin_layout Plain Layout
+
+$ catkin_make
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+La libreria è composta da diversi strumenti:
+\end_layout
+
+\begin_layout Description
+canopen_master implementazione di un master secondo lo standarc CiA 301,
+ con supporto di sincronizzazione infra-processo.
+ 
+\end_layout
+
+\begin_layout Description
+canopen_chain_node controlla un bus CANopen con uno o più nodi, che sono
+ configurati attraverso un file EDS/DCF
+\end_layout
+
+\begin_layout Description
+canopen_motor_node fornisce un'interfaccia ros_control a motori conformi
+ allo standard CiA 402
+\end_layout
+
+\begin_layout Description
+socketcan_bridge espone i frames CAN ai messaggi ROS e viceversa
+\end_layout
+
+\begin_layout Description
+socketcan_interface fornisce un'interfaccia CAN generica e un'implementazione
+ dei driver basata su socketcan
+\end_layout
+
+\begin_layout Description
+canopen_402 contiene l'implementazione del protocollo CiA 402 DSP
+\end_layout
+
+\begin_layout Description
+can_msgs definizione di messaggio ROS per CAN
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename immagini/schema_ros_canopen.png
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Schema di funzionamento di ros_canopen
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+File .edf .urdf
+\end_layout
+
+\begin_layout Standard
+Per funzionare, sia Kacanopen che ros_canopen hanno bisogno di due file:
+ EDS (Electronic Data Sheet) e URDF (Universal Robotic Description Format)
+ 
+\end_layout
+
+\begin_layout Subsection
+EDF
+\end_layout
+
+\begin_layout Standard
+L'electronic data sheet è un template fornito dall'azienda produttrice dell'obje
+ct dictionary e contiene informazioni su tutti gli oggetti dell'OD, senza
+ però i valori, che vengono specificati dal progettista finale.
+ 
+\end_layout
+
+\begin_layout Standard
+Un esempio di oggetto all'interno del file .edf è il seguente: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+[604E]
+\end_layout
+
+\begin_layout Plain Layout
+
+ParameterName=Vl Velocity Reference 
+\end_layout
+
+\begin_layout Plain Layout
+
+ObjectType=0x07 
+\end_layout
+
+\begin_layout Plain Layout
+
+DataType=0x0007 
+\end_layout
+
+\begin_layout Plain Layout
+
+AccessType=rw 
+\end_layout
+
+\begin_layout Plain Layout
+
+PDOMapping=0
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Fortunatamente il drive Microphase usa lo standard CiA 402, per cui esiste
+ già un file pronto all'uso tra quelli disponibili nella libreria Kacanopen.
+\end_layout
+
+\begin_layout Subsection
+URDF
+\end_layout
+
+\begin_layout Standard
+L'Universal Robotic Description Format descrive apputo il robot nella sua
+ completezza da un punto di vista cinematico, ed è formattato in xml.
+\end_layout
+
+\begin_layout Standard
+Per creare un file URDF si abbozza prima una lista dei collegamenti e delle
+ articolazioni del robot
+\begin_inset CommandInset citation
+LatexCommand cite
+key "urdf_file"
+
+\end_inset
+
+: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+<robot name="test_robot">
+\end_layout
+
+\begin_layout Plain Layout
+
+  <link name="link1" />
+\end_layout
+
+\begin_layout Plain Layout
+
+  <link name="link2" />
+\end_layout
+
+\begin_layout Plain Layout
+
+  <link name="link3" />
+\end_layout
+
+\begin_layout Plain Layout
+
+  <link name="link4" />
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  <joint name="joint1" type="continuous">
+\end_layout
+
+\begin_layout Plain Layout
+
+    <parent link="link1"/>
+\end_layout
+
+\begin_layout Plain Layout
+
+    <child link="link2"/>
+\end_layout
+
+\begin_layout Plain Layout
+
+  </joint>
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  <joint name="joint2" type="continuous">
+\end_layout
+
+\begin_layout Plain Layout
+
+    <parent link="link1"/>
+\end_layout
+
+\begin_layout Plain Layout
+
+    <child link="link3"/>
+\end_layout
+
+\begin_layout Plain Layout
+
+  </joint>
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  <joint name="joint3" type="continuous">
+\end_layout
+
+\begin_layout Plain Layout
+
+    <parent link="link3"/>
+\end_layout
+
+\begin_layout Plain Layout
+
+    <child link="link4"/>
+\end_layout
+
+\begin_layout Plain Layout
+
+  </joint>
+\end_layout
+
+\begin_layout Plain Layout
+
+</robot>
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Nel file specifichiamo prima i nomi dei vari collegamenti, poi i gradi di
+ "parentela", cioè a quali collegamenti si attaccano le articolazioni.
+\end_layout
+
+\begin_layout Standard
+In seguito posizioniamo nello spazio le articolazioni attraverso il tag
+ "origin", specificando la distanza e l'angolo di rotazione di ognuna rispetto
+ alla sua origine e infine con il tag "axis" specifichiamo come si muovono
+ le articolazioni.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+<robot name="test_robot">
+\end_layout
+
+\begin_layout Plain Layout
+
+  <link name="link1" />
+\end_layout
+
+\begin_layout Plain Layout
+
+  <link name="link2" />
+\end_layout
+
+\begin_layout Plain Layout
+
+  <link name="link3" />
+\end_layout
+
+\begin_layout Plain Layout
+
+  <link name="link4" />
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  <joint name="joint1" type="continuous">
+\end_layout
+
+\begin_layout Plain Layout
+
+    <parent link="link1"/>
+\end_layout
+
+\begin_layout Plain Layout
+
+    <child link="link2"/>
+\end_layout
+
+\begin_layout Plain Layout
+
+    <origin xyz="5 3 0" rpy="0 0 0" />
+\end_layout
+
+\begin_layout Plain Layout
+
+    <axis xyz="-0.9 0.15 0" />
+\end_layout
+
+\begin_layout Plain Layout
+
+  </joint>
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  <joint name="joint2" type="continuous">
+\end_layout
+
+\begin_layout Plain Layout
+
+    <parent link="link1"/>
+\end_layout
+
+\begin_layout Plain Layout
+
+    <child link="link3"/>
+\end_layout
+
+\begin_layout Plain Layout
+
+    <origin xyz="-2 5 0" rpy="0 0 1.57" />
+\end_layout
+
+\begin_layout Plain Layout
+
+    <axis xyz="-0.707 0.707 0" />
+\end_layout
+
+\begin_layout Plain Layout
+
+  </joint>
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  <joint name="joint3" type="continuous">
+\end_layout
+
+\begin_layout Plain Layout
+
+    <parent link="link3"/>
+\end_layout
+
+\begin_layout Plain Layout
+
+    <child link="link4"/>
+\end_layout
+
+\begin_layout Plain Layout
+
+    <origin xyz="5 0 0" rpy="0 0 -1.57" />
+\end_layout
+
+\begin_layout Plain Layout
+
+    <axis xyz="0.707 -0.707 0" />
+\end_layout
+
+\begin_layout Plain Layout
+
+  </joint>
+\end_layout
+
+\begin_layout Plain Layout
+
+</robot>
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

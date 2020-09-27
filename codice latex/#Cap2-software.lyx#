@@ -132,9 +132,9 @@ Frutto dell'unione iniziale di diversi progetti dell'università di Stanford
 \end_layout
 
 \begin_layout Standard
-Lo sviluppo di ROS è basato su un modello "Federale" in cui un gruppo può
- scaricare il codice di ROS nel proprio server, lavorarci e decidere in
- seguito se renderlo disponibile pubblicamente sotto forma di open software.
+Lo sviluppo è basato su un modello "Federale" in cui un gruppo può scaricare
+ il codice di ROS nel proprio server, lavorarci e decidere in seguito se
+ renderlo disponibile pubblicamente sotto forma di open software.
  
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -146,24 +146,61 @@ key "ROS2017"
 \end_layout
 
 \begin_layout Standard
-I processi di ROS sono rappresentati come nodi in una struttura a grafi.
- 
-\end_layout
-
-\begin_layout Standard
-I nodi comunicano tra di loro inviando messaggi attraverso canali chiamati
- topics, possono svolgere funzioni o richiedere lo svolgimento di funzioni
- per e da altri nodi o accedere a un database di informazioni comuni chiamato
+I processi di ROS sono rappresentati come nodi in una struttura a grafi,
+ comunicano tra di loro inviando messaggi attraverso canali chiamati topics.
+ I nodi possono svolgere funzioni o richiedere lo svolgimento di funzioni
+ per e da altri nodi ed accedere a un database di informazioni comuni chiamato
  parameter server.
  
 \end_layout
 
 \begin_layout Standard
-Nel 2020 è uscita l'ultima versione di ROS, Noetic Ninjemys.
- Infatti la maggior parte delle risorse della open robotic foundation è
- stata destinata allo sviluppo di ROS2 che, a differenza del suo predecessore,
- permette il controllo in real-time.
- 
+Per questo ROS è utile per armonizzare diversi ambiti del controllo del
+ rover, attraverso i topics è possibile mettere in comunicazione macchine
+ differenti (in questo caso la base station e il computer di bordo) permettendo
+ sia il controllo in remoto attraverso un HMI sulla base station, sia la
+ navigazione autonoma, attraverso i sensori montati sul rover che inviano
+ le informazioni raccolte al nodo incaricato dell'elaborazione dati.
+ I comandi inviati dal pilota o dall'algoritmo incaricato alla navigazione
+ a partire dai rispettivi nodi, devono essere tradotti da un processo di
+ ROS in CANopen frames (di cui parleremo nella sezione dedicata a CANopen)
+ e poi comunicati sul bus CAN.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename immagini/SchemaROS1.png
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Ruolo svolto da ROS nel motion control
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -171,15 +208,11 @@ ROS master
 \end_layout
 
 \begin_layout Standard
-Il master rende le comunicazioni possibili registrando i nodi a se stesso,
- per poi fare un set-up di comunicazioni peer-to-peer tra i nodi attraverso
- i topics.
- 
-\end_layout
-
-\begin_layout Standard
-Il master inoltre svolge la funzione di controllo degli update del parameter
- server.
+Il nodo più importante nello schema di ROS è il master, infatti esso offre
+ un servizio di naming e di registrazione al resto dei nodi.
+ Essenzialmente quello che il master fa è permettere ai nodi di trovarsi
+ a vicenda quando hanno la necessità di scambiare informazioni, svolge inoltre
+ la funzione di controllo degli update del parameter server.
  
 \end_layout
 
@@ -217,13 +250,9 @@ I nodi rappresentano singoli processi, ognuno con un nome definito, e sono
 \end_layout
 
 \begin_layout Standard
-Per funzionare un nodo deve essere iscritto al master.
- 
-\end_layout
-
-\begin_layout Standard
-Ogni nodo esegue delle azioni in base agli input ricevuti.
- Queste azioni possono essere comunicare con altri nodi attraverso i topics,
+Ogni nodo per funzionare deve essere iscritto al master, ed esegue delle
+ azioni in base agli input ricevuti.
+ Queste azioni possono essere comunicate con altri nodi attraverso i topics,
  modificare il parameter server, oppure offrire servizi.
  
 \begin_inset CommandInset citation
@@ -291,6 +320,16 @@ key "ROS2019"
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+Per trasmettere un messaggio, un nodo comunica al master che sta pubblicando
+ un dato su di un dato topic, ma non essendo nessun altro nodo iscritto
+ a quel topic, il messaggio non viene inviato.
+ Appena un altro nodo comunica al master che si sta iscrivendo ad un dato
+ topic, il master arbitra una comunicazione tra di essi, permettendo al
+ nodo 1 di inviare il messaggio direttamente al nodo 2, senza che l'informazione
+ passi attraverso il master.
 \end_layout
 
 \begin_layout Subsection
@@ -410,6 +449,46 @@ key "FlorianHartwich2017,CiA"
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename immagini/SchemaCANopen.png
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Ruolo svolto da CAN e CANopen nel Motion control
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 Livello fisico 
 \end_layout
@@ -440,10 +519,6 @@ I segnali vengono impostati su uno stato dominante quando CAN-H ha una tensione
 LatexCommand cite
 key "2002"
 
-\end_inset
-
-
-\begin_inset Newpage newpage
 \end_inset
 
 
@@ -750,14 +825,21 @@ Il CiA 402 è un profilo standardizzato per drives elettrici che implementa
 ed Position, Profile Torque e Velocity.
  Tutte queste modalità sono supportate dal drive Microphase, ma quella di
  nostro interesse è la modalità a target di velocità.
- 
+ Sono specificate inoltre uno set di PDO generiche di default disponibili
+ per tutti i drives
 \end_layout
 
 \begin_layout Standard
-Lo standard CiA 402 inoltre implementa una macchina a stati, che implementa
- l'attivazione e il blocco del drive oltre ad altri comandi specifici della
- modalità di funzionamento impostata.
- 
+Lo standard CiA 402 implementa anche una macchina a stati, che permette
+ l'attivazione e il blocco del drive e determina quali comandi sono accettati
+ in base allo stato corrente o se è possibile applicare potenza al motore.
+ Questi stati cambiano quando ricevono una control-word dal controllore,
+ possono anche cambiare in seguito ad eventi interni al drive (gestione
+ errori).
+ Lo stato attuale è indicato da una status-word, che insieme ad altri valori
+ di stato, viene ricevuta dal controllore attraverso un TPDO(transmit process
+ data object).
+ La control-word e altr 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Cia2002"

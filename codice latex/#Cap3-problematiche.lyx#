@@ -453,7 +453,12 @@ $ source devel/setup.bash
 
 \begin_layout Plain Layout
 
-$ echo $ROS_PACKAGE_PATH /home/youruser/catkin_ws/src:/opt/ros/kinetic/share
+$ echo $ROS_PACKAGE_PATH /home/youruser/catkin_ws/src:/opt/ros/
+\end_layout
+
+\begin_layout Plain Layout
+
+kinetic/share
 \end_layout
 
 \end_inset
@@ -989,8 +994,12 @@ status open
 
 \begin_layout Plain Layout
 
-$ wget http://www.peak-system.com/fileadmin/media/linux/files/peak-linux-driver-7.1
-5.2.tar.gz tar -xzf peak-linux-driver-7.15.2.tar.gz 
+$ wget http://www.peak-system.com/fileadmin/media/linux/files/
+\end_layout
+
+\begin_layout Plain Layout
+
+peak-linux-driver-7.15.2.tar.gz tar -xzf peak-linux-driver-7.15.2.tar.gz 
 \end_layout
 
 \begin_layout Plain Layout
@@ -1028,6 +1037,31 @@ Ma una volta scaricati, non sembra siano compatibili con la versione del
  sistema operativo, infatti durante il processo di installazione una grossa
  porzione del codice dà errori.
  
+\end_layout
+
+\begin_layout Standard
+È stato fatto un tentativo di utilizzare Kacanopen con driver aggiornati,
+ aggiungendo i driver peak_usb all'interno di /kacanopen/src/drivers_lgpl
+ e utilizzando poi:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ catkin_make -DDRIVER=peak_usb
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Ma non sono stati ottenuti i risultati sperati.
 \end_layout
 
 \begin_layout Section
@@ -1141,7 +1175,394 @@ can_msgs definizione di messaggio ROS per CAN
 \end_layout
 
 \begin_layout Standard
-Nonostante sia stato eseguito un settaggio delle specifiche del 
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename immagini/schema_ros_canopen.png
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Schema di funzionamento di ros_canopen
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+File .edf .urdf
+\end_layout
+
+\begin_layout Standard
+Per funzionare, sia Kacanopen che ros_canopen hanno bisogno di due file:
+ EDS (Electronic Data Sheet) e URDF (Universal Robotic Description Format)
+ 
+\end_layout
+
+\begin_layout Subsection
+EDF
+\end_layout
+
+\begin_layout Standard
+L'electronic data sheet è un template fornito dall'azienda produttrice dell'obje
+ct dictionary e contiene informazioni su tutti gli oggetti dell'OD, senza
+ però i valori, che vengono specificati dal progettista finale.
+ 
+\end_layout
+
+\begin_layout Standard
+Un esempio di oggetto all'interno del file .edf è il seguente: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+[604E]
+\end_layout
+
+\begin_layout Plain Layout
+
+ParameterName=Vl Velocity Reference 
+\end_layout
+
+\begin_layout Plain Layout
+
+ObjectType=0x07 
+\end_layout
+
+\begin_layout Plain Layout
+
+DataType=0x0007 
+\end_layout
+
+\begin_layout Plain Layout
+
+AccessType=rw 
+\end_layout
+
+\begin_layout Plain Layout
+
+PDOMapping=0
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Fortunatamente il drive Microphase usa lo standard CiA 402, per cui esiste
+ già un file pronto all'uso tra quelli disponibili nella libreria Kacanopen.
+\end_layout
+
+\begin_layout Subsection
+URDF
+\end_layout
+
+\begin_layout Standard
+L'Universal Robotic Description Format descrive apputo il robot nella sua
+ completezza da un punto di vista cinematico, ed è formattato in xml.
+\end_layout
+
+\begin_layout Standard
+Per creare un file URDF si abbozza prima una lista dei collegamenti e delle
+ articolazioni del robot: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+<robot name="test_robot">
+\end_layout
+
+\begin_layout Plain Layout
+
+  <link name="link1" />
+\end_layout
+
+\begin_layout Plain Layout
+
+  <link name="link2" />
+\end_layout
+
+\begin_layout Plain Layout
+
+  <link name="link3" />
+\end_layout
+
+\begin_layout Plain Layout
+
+  <link name="link4" />
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  <joint name="joint1" type="continuous">
+\end_layout
+
+\begin_layout Plain Layout
+
+    <parent link="link1"/>
+\end_layout
+
+\begin_layout Plain Layout
+
+    <child link="link2"/>
+\end_layout
+
+\begin_layout Plain Layout
+
+  </joint>
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  <joint name="joint2" type="continuous">
+\end_layout
+
+\begin_layout Plain Layout
+
+    <parent link="link1"/>
+\end_layout
+
+\begin_layout Plain Layout
+
+    <child link="link3"/>
+\end_layout
+
+\begin_layout Plain Layout
+
+  </joint>
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  <joint name="joint3" type="continuous">
+\end_layout
+
+\begin_layout Plain Layout
+
+    <parent link="link3"/>
+\end_layout
+
+\begin_layout Plain Layout
+
+    <child link="link4"/>
+\end_layout
+
+\begin_layout Plain Layout
+
+  </joint>
+\end_layout
+
+\begin_layout Plain Layout
+
+</robot>
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Nel file specifichiamo prima i nomi dei vari collegamenti, poi i gradi di
+ "parentela", cioè a quali collegamenti si attaccano le articolazioni.
+\end_layout
+
+\begin_layout Standard
+In seguito posizioniamo nello spazio le articolazioni attraverso il tag
+ "origin", specificando la distanza e l'angolo di rotazione di ognuna rispetto
+ alla sua origine e infine con il tag "axis" specifichiamo come si muovono
+ le articolazioni.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+<robot name="test_robot">
+\end_layout
+
+\begin_layout Plain Layout
+
+  <link name="link1" />
+\end_layout
+
+\begin_layout Plain Layout
+
+  <link name="link2" />
+\end_layout
+
+\begin_layout Plain Layout
+
+  <link name="link3" />
+\end_layout
+
+\begin_layout Plain Layout
+
+  <link name="link4" />
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  <joint name="joint1" type="continuous">
+\end_layout
+
+\begin_layout Plain Layout
+
+    <parent link="link1"/>
+\end_layout
+
+\begin_layout Plain Layout
+
+    <child link="link2"/>
+\end_layout
+
+\begin_layout Plain Layout
+
+    <origin xyz="5 3 0" rpy="0 0 0" />
+\end_layout
+
+\begin_layout Plain Layout
+
+    <axis xyz="-0.9 0.15 0" />
+\end_layout
+
+\begin_layout Plain Layout
+
+  </joint>
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  <joint name="joint2" type="continuous">
+\end_layout
+
+\begin_layout Plain Layout
+
+    <parent link="link1"/>
+\end_layout
+
+\begin_layout Plain Layout
+
+    <child link="link3"/>
+\end_layout
+
+\begin_layout Plain Layout
+
+    <origin xyz="-2 5 0" rpy="0 0 1.57" />
+\end_layout
+
+\begin_layout Plain Layout
+
+    <axis xyz="-0.707 0.707 0" />
+\end_layout
+
+\begin_layout Plain Layout
+
+  </joint>
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  <joint name="joint3" type="continuous">
+\end_layout
+
+\begin_layout Plain Layout
+
+    <parent link="link3"/>
+\end_layout
+
+\begin_layout Plain Layout
+
+    <child link="link4"/>
+\end_layout
+
+\begin_layout Plain Layout
+
+    <origin xyz="5 0 0" rpy="0 0 -1.57" />
+\end_layout
+
+\begin_layout Plain Layout
+
+    <axis xyz="0.707 -0.707 0" />
+\end_layout
+
+\begin_layout Plain Layout
+
+  </joint>
+\end_layout
+
+\begin_layout Plain Layout
+
+</robot>
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \end_body
