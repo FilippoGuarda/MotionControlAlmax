@@ -825,13 +825,22 @@ Il CiA 402 è un profilo standardizzato per drives elettrici che implementa
 ed Position, Profile Torque e Velocity.
  Tutte queste modalità sono supportate dal drive Microphase, ma quella di
  nostro interesse è la modalità a target di velocità.
- 
+ Sono specificate inoltre uno set di PDO generiche di default disponibili
+ per tutti i drives
 \end_layout
 
 \begin_layout Standard
-Lo standard CiA 402 inoltre implementa una macchina a stati, che implementa
- l'attivazione e il blocco del drive oltre ad altri comandi specifici della
- modalità di funzionamento impostata.
+Lo standard CiA 402 implementa anche una macchina a stati, che permette
+ l'attivazione e il blocco del drive e determina quali comandi sono accettati
+ in base allo stato corrente o se è possibile applicare potenza al motore.
+ Questi stati cambiano quando ricevono una control-word dal controllore,
+ possono anche cambiare in seguito ad eventi interni al drive (gestione
+ errori).
+ Lo stato attuale è indicato da una status-word, che insieme ad altri valori
+ di stato, viene ricevuta dal controllore attraverso un TPDO(transmit process
+ data object).
+ La control-word e altri comandi, tra cui il target di velocità, vengono
+ inviati attraverso un RPDO(receive process data object).
  
 \begin_inset CommandInset citation
 LatexCommand cite

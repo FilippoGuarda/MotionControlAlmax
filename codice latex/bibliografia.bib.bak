@@ -261,7 +261,7 @@
 
 @Electronic{IXXAT,
   author       = {IXXAT},
-  howpublished = {https://ixxat.com/products/automotive-solutions/overview/pc-interfaces/usb-to-can-fd},
+  howpublished = {\url{https://ixxat.com/products/automotive-solutions/overview/pc-interfaces/usb-to-can-fd}},
   title        = {USB-to-CAN FD},
   url          = {https://ixxat.com/products/automotive-solutions/overview/pc-interfaces/usb-to-can-fd},
 }

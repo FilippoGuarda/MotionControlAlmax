@@ -1284,6 +1284,11 @@ Fortunatamente il drive Microphase usa lo standard CiA 402, per cui esiste
  già un file pronto all'uso tra quelli disponibili nella libreria Kacanopen.
 \end_layout
 
+\begin_layout Standard
+Per utilizzi esterni a Kacanopen, il file 402.eds è stato inserito nella
+ cartella /drivers e librerie/EDS nel repository github di questa tesi.
+\end_layout
+
 \begin_layout Subsection
 URDF
 \end_layout
@@ -1569,6 +1574,10 @@ status open
 
 \end_inset
 
+
+\end_layout
+
+\begin_layout Standard
 
 \end_layout
 

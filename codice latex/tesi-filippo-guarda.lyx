@@ -313,8 +313,8 @@ primalettera{L}
 
 \end_inset
 
-a ERC, European Rover Challenge, è una competizione a livello europeo organizzat
-a dal 2014 in Polonia.
+a ERC, European Rover Challenge, è una competizione a livello europeo, organizza
+ta dal 2014 in Polonia.
  Anche l'università di Bologna, in collaborazione con la sede di Forlì,
  partecipa a questa competizione con il gruppo AlmaX, che ha il compito
  di sviluppare un rover che rispetti le specifiche fornite nel regolamento
@@ -325,7 +325,7 @@ key "Bogusz2020"
 
 \end_inset
 
-, tra cui: 
+, tra queste caratteristiche: 
 \end_layout
 
 \begin_layout Itemize
@@ -339,8 +339,8 @@ co, oltre alla possibilità di inviare comandi al rover da una base station
 \end_layout
 
 \begin_layout Itemize
-La capacità del rover di attraversare ostacoli e terreno accidentato simile
- al suolo marziano.
+La capacità del rover di attraversare ostacoli e un terreno accidentato
+ simile al suolo marziano.
 \end_layout
 
 \begin_layout Itemize
@@ -349,7 +349,13 @@ La capacità del rover di interagire con un pannello di controllo fisico
 
 \begin_layout Standard
 Inserito nel contesto più ampio dello sviluppo del rover, l'argomento di
- questa tesi è il benchmark della parte di motion control.
+ questa tesi è il benchmark della parte relativa al motion control.
+\end_layout
+
+\begin_layout Standard
+Durante la durata del progetto è stato eseguito il setup completo dell'hardware
+ e sono state testate le funzionalità dei vari software disponibili con
+ lo scopo di trovare il miglior candidato per il completamento del progetto.
 \end_layout
 
 \begin_layout Standard
@@ -375,16 +381,16 @@ Pipeline
 
 \begin_layout Standard
 L'obiettivo di questa tesi è di permettere ad una base station di controllare
- i motori BLDC a bordo del rover attraverso messaggi in cui è specificato
- un target di velocità da raggiungere, il quale viene tradotto in un comando
- leggibile dal drive che si occupa di raggiungerlo controllando il motore
- in PWM, con curve di accelerazione definite a priori.
+ i motori BLDC a bordo del rover attraverso messaggi.
+ Tali messaggi specificano un target di velocità da raggiungere che viene
+ tradotto in un comando leggibile dal drive che si occupa di raggiungerlo
+ controllando il motore in PWM con curve di accelerazione definite a priori.
 \end_layout
 
 \begin_layout Standard
 Il drive a sua volta riceve un feedback dall'encoder del motore e deve inviare
  al computer di bordo la conferma di effettivo raggiungimento del target
- o, in alternativa, della presenza di errori.
+ o, in alternativa, la presenza di errori.
 \end_layout
 
 \begin_layout Standard
@@ -427,33 +433,19 @@ Pipeline del Motion Control
 
 \end_layout
 
-\begin_layout Standard
-\begin_inset Note Comment
-status open
-
-\begin_layout Plain Layout
-TODO inserire immagine
-\end_layout
-
-\end_inset
-
-.
-\end_layout
-
 \begin_layout Section
 Capitolo 1
 \end_layout
 
 \begin_layout Standard
-Nel primo capitolo si analizzeranno i componenti hardware che fanno parte
- del motion control del Rover: motore, drive, adattatori e alimentatori.
+Nel primo capitolo si analizzano i componenti hardware che fanno parte del
+ motion control del Rover: motore, drive, adattatori e alimentatori.
 \end_layout
 
 \begin_layout Standard
-Si mostrerà inoltre il corretto cablaggio degli adattatori che connettono
- il drive al computer di bordo, al motore e al PC windows necessario per
- la programmazione iniziale dei suoi parametri.
- 
+Si mostra inoltre il corretto cablaggio degli adattatori che permettono
+ la comunicazione con il drive da parte del computer di bordo, oltre ai
+ connettori di potenza e di feedback del motore.
 \end_layout
 
 \begin_layout Section
@@ -461,14 +453,23 @@ Capitolo 2
 \end_layout
 
 \begin_layout Standard
-Il secondo capitolo è dedicato ad una introduzione a ROS e CANopen, il primo
- un middleware specifico per la robotica e il secondo uno standard di comunicazi
+Il secondo capitolo è dedicato ad una introduzione a ROS e CANopen: il primo,
+ un middleware specifico per la robotica, il secondo, uno standard di comunicazi
 one necessario a controllare il drive.
+\end_layout
+
+\begin_layout Standard
+La prima sezione è dedicata a ROS e ai suoi componenti: master, nodi, messaggi
+ e topics.
+ Come ROS li utilizza per permettere la comunicazione tra macchine differenti
+ e per ampliare le sue capacità con strumenti e librerie esterne.
+\end_layout
+
+\begin_layout Standard
+La seconda sezione è dedicata a al bus CAN, attraverso il quale il protocollo
+ CANopen(terza sezione) muove pacchetti di informazione (PDO ed SDO) attraverso
+ i diversi nodi che fanno parte del sistema di motion control.
  
-\begin_inset Newpage newpage
-\end_inset
-
-
 \end_layout
 
 \begin_layout Section
@@ -476,11 +477,11 @@ Software
 \end_layout
 
 \begin_layout Standard
-Nel terzo capitolo si elencheranno i diversi strumenti utilizzati nei successivi
+Nel terzo capitolo si elencano i diversi strumenti utilizzati nei successivi
  tentativi di comunicare con il drive, partendo da quelli a livello più
- alto, fino ad arrivare al candidato più promettente per eseguire un bridging
- efficace tra i messaggi di ROS e i frame CANopen.
- 
+ basso, fino ad arrivare ai due candidati più promettenti (due librerie
+ di ROS: ros_canopen e Kacanopen) che possono eseguire il bridging tra messaggi
+ ROS e frame CANopen.
 \end_layout
 
 \begin_layout Chapter
@@ -504,7 +505,7 @@ primalettera{O}
 
 \end_inset
 
-bbiettivo del progetto è il controllo di un motore BLDC, in questo caso
+bbiettivo del progetto è il controllo di un motore BLDC; nel caso in esame,
  i motori forniti sono Siboni S60 ed S40.
  Questi motori hanno le seguenti specifiche, che ci saranno utili più tardi
  per inserirle nei parametri del drive
@@ -677,7 +678,7 @@ Specifiche principali del motore Siboni ProPlanet S060 2B305
 \end_layout
 
 \begin_layout Standard
-I motori dispongono di connettori di tipo molex a 6 e 12 pin, con la seguenti
+I motori dispongono di connettori di tipo molex a 6 e 12 pin, con le seguenti
  schematiche
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -773,15 +774,15 @@ key "UPboard,UPboard2020"
 \end_inset
 
 , molto comoda in quanto estremamente modulare e dotata di moduli extra.
- Tra i muduli disponibili è presente anche uno dotato di porte seriali CAN
- e rs422, molto utile ai fini del progetto in quanto riduce il numero di
- connettori extra.
+ Tra i muduli disponibili ne è presente anche uno dotato di porte seriali
+ CAN e rs422, molto utile ai fini del progetto in quanto riduce il numero
+ di connettori extra.
  
 \end_layout
 
 \begin_layout Standard
-Per questo progetto, non essendo disponibile la UPboard è stato utilizzato
- un normale computer che utilizza linux come OS.
+Per questo progetto, non essendo disponibile la UPboard, è stato utilizzato
+ un normale computer che utilizza Linux come OS.
 \end_layout
 
 \begin_layout Section
@@ -945,8 +946,8 @@ Specifiche principali del drive MicroDigitalOne
 
 \begin_layout Standard
 Il drive è collegato al motore attraverso due connettori.
- Uno di potenza, attraverso cui passano le fasi della PWM, il ground e la
- linea che disattiva il freno integrato nel motore.
+ Uno di potenza, attraverso il quale passano le fasi della PWM, il ground
+ e la linea che disattiva il freno integrato nel motore.
  L'altro responsabile della ricezione del feedback di posizione da parte
  dell'encoder incrementale e dei sensori di Hall.
  
@@ -959,7 +960,7 @@ Sul drive sono anche presenti due attacchi RJ45 che il drive usa per comunicare
 \end_layout
 
 \begin_layout Section
-Convertitore Moxa e adattatore PCAN
+Convertitore MOXA e adattatore PCAN
 \end_layout
 
 \begin_layout Standard
@@ -975,7 +976,7 @@ MOXA
 Per programmare parametri e registri del drive è necessario utilizzare un
  software proprietario (di cui si parlerà nel dettaglio nel capitolo 2)
  che comunica attraverso una connessione seriale rs 422 resa possibile da
- un convertitore moxa.
+ un convertitore MOXA.
  Il convertitore è dotato di tre led di stato: uno che indica l'accensione,
  uno che si illumina in trasmissione e uno che si illumina in ricezione.
 \end_layout
@@ -985,7 +986,7 @@ PCAN
 \end_layout
 
 \begin_layout Standard
-Invece la comunicazione con il computer di bordo avviene su bus CAN, attraverso
+La comunicazione con il computer di bordo avviene su bus CAN, attraverso
  l' adattatore PCAN
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -1017,10 +1018,10 @@ Adattatori
 \end_layout
 
 \begin_layout Standard
-Sia il convertitore MOXA che il PCAN utilizzano per la connessione seriale
- degli attacchi DB9, di cui solo una parte dei pin è effettivamente utilizzata.
- Questo è un problema in quanto il drive dispone solo di attacchi rj45.
- Per ovviare al problema sono stati cablati a mano due adattatori.
+Sia il convertitore MOXA che il PCAN utilizzano, per la connessione seriale,
+ degli attacchi DB9, che utilizzano effettivamente solo una parte dei pin.
+ Questo è un problema in quanto il drive dispone solo di attacchi RJ45.
+ Per ovviarlo sono stati cablati a mano due adattatori.
  
 \end_layout
 
@@ -1029,9 +1030,9 @@ Adattatore per MOXA
 \end_layout
 
 \begin_layout Standard
-Benchè dalla documentazione del convertitore moxa non venga specificato
- su quali pin passi la linea seriale rs422, nella confezione è fornito un
- attacco extra che presenta connessioni ben definite.
+Benchè la documentazione del convertitore MOXA specifichi su quali pin passi
+ la linea seriale rs422, nella confezione è fornito un attacco extra che
+ presenta connessioni ben definite.
  Utilizzando la schematica degli attacchi RJ45 fornita nel datasheet del
  drive
 \begin_inset CommandInset citation
@@ -1041,7 +1042,7 @@ key "MicrophaseInterface"
 \end_inset
 
  è stato cablato a mano un cavo ethernet con un RJ45 da un lato e cavi scoperti
- dall'altro, in modo da poterli connettere con l'attacco fornito.
+ dall'altro, in modo da poterli connettere all'attacco fornito.
 \end_layout
 
 \begin_layout Standard
@@ -1067,7 +1068,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Adattatore db9-rj45 insieme al MOXA
+Adattatore DB9-RJ45(sinistra) insieme al MOXA
 \end_layout
 
 \end_inset
@@ -1103,7 +1104,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Schematica adattatore db9-rj45 per MOXA
+Schematica adattatore DB9-RJ45 per MOXA
 \end_layout
 
 \end_inset
@@ -1125,11 +1126,10 @@ Adattatore per PCAN
 \end_layout
 
 \begin_layout Standard
-Anche l'adattatore PCAN dispone di un attacco db9, di cui solo 4 pin vengono
- utilizzati.
+Anche l'adattatore PCAN dispone di un attacco DB9, che utilizza solo 4 pin.
  Il bus can passa attraverso i pin 2 (Can H) e 7 (Can L) questi due pin
  devono essere collegati ai pin n.
- 2 e 3 dell'attacco rj45.
+ 2 e 3 dell'attacco RJ45.
  Questa connessione si effettua tramite un adattatore cablabile a mano di
  facile reperibilità.
  Quello utilizzato in questo progetto nello specifico è stato acquistato
@@ -1145,8 +1145,8 @@ UTF8&psc=1
 
 \end_inset
 
-) ed ha i pin dell'attacco rj45 femmina codificati tramite i colori dei
- cavetti che vanno inseriti manualmente nell'attacco db9 femmina, secondo
+) ed ha i pin dell'attacco RJ45 femmina codificati tramite i colori dei
+ cavetti che vanno inseriti manualmente nell'attacco DB9 femmina, secondo
  questa schematica
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -1180,7 +1180,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Schematica adattatore db9-rj45 per PCAN
+Schematica adattatore DB9-RJ45 per PCAN
 \end_layout
 
 \end_inset
@@ -1216,7 +1216,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Adattatore db9-rj45 insieme al PCAN
+Adattatore DB9-RJ45(centro) insieme al PCAN(sinistra) e al cavo LAN
 \end_layout
 
 \end_inset
@@ -1240,8 +1240,8 @@ Alimentatori
 \begin_layout Standard
 Per il progetto servono due alimentatori separati, uno di potenza (BK precision
  9104), che alimenta il controllo PWM a 48V (nel rover l'alimentazione sarà
- fornita da una batteria a 48V) e uno riservato alla parte logica, che alimenta
- il drive a 24V.
+ fornita da una batteria a 48V), e uno riservato alla parte logica, che
+ alimenta il drive a 24V.
 \end_layout
 
 \begin_layout Standard
@@ -1289,13 +1289,13 @@ status open
 
 
 \backslash
-primalettera{C}
+primalettera{D}
 \end_layout
 
 \end_inset
 
-onfrontando le possibili opzioni, l'approccio migliore per il completamento
- del progetto sembra essere quello di sfruttare la libreria ros_canopen.
+opo aver confrontato le possibili opzioni, l'approccio migliore per il completam
+ento del progetto sembra essere quello di sfruttare la libreria ros_canopen.
  
 \end_layout
 
@@ -1306,18 +1306,18 @@ Il problema principale è posto dalla mancata comunicazione del computer
 \end_layout
 
 \begin_layout Standard
-Le particolari condizioni in cui è stato portato avanti questo progetto
- a causa del coronavirus (lavoro completamente indipendente, assenza di
- supporto da parte di personale più qualificato, adattatori "artigianali",
- mancanza di un laboratorio e strumentazione adeguata...
- ) ha sicuramente influito negativamente sui suoi risultati, ma con la riapertur
-a dell'università si aprono nuove possibilità di risolvere le problematiche
- incontrate finora.
- 
-\begin_inset Newpage newpage
-\end_inset
+Il contesto "ambientale" dei mesi recenti, segnato dall'epidemia covid-19,
+ ha influito negativamente sullo svolgimento del progetto e sui risultati
+ ottenuti imponendo condizioni di lavoro e di osservazione limitative (lavoro
+ completamente indipendente, assenza di supporto da parte di personale più
+ qualificato, adattatori "artigianali", mancanza di un laboratorio e strumentazi
+one adeguata...).
+\end_layout
 
-
+\begin_layout Standard
+Ora, la riapertura delle sedi universitarie determina condizioni se non
+ ottimali, certamente migliori, grazie alle quali è possibile attendere
+ la soluzione di problemi sin qui incontrati.
 \end_layout
 
 \begin_layout Standard
@@ -1343,7 +1343,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Ambiente di lavoro in cui il progetto è stato portato avanti
+Ambiente di lavoro in cui il progetto è stato svolto
 \end_layout
 
 \end_inset
@@ -1361,33 +1361,32 @@ Ambiente di lavoro in cui il progetto è stato portato avanti
 \end_layout
 
 \begin_layout Section
-Debugging del connettore rj45
+Debugging del connettore RJ45
 \end_layout
 
 \begin_layout Standard
 Durante il lockdown e nei mesi successivi, in mancanza di un oscilloscopio
  e di un analizzatore logico, è stato impossibile accertarsi che il drive
  ricevesse effettivamente i segnali inviati.
- Benchè il connettore PCAN disponga di un led che varia la frequenza di
- lampeggiamento in base alla presenza o meno di traffico sul bus, potrebbero
- esserci dei problemi di interferenza o altre complicazioni nel trasporto
- dell'informazione al drive.
+ Il connettore PCAN dispone di un led che varia la frequenza di lampeggiamento
+ in base alla presenza o meno di traffico sul bus, ma ciò non esclude che
+ possano presentarsi dei problemi di interferenza o altre complicazioni
+ nel trasporto dell'informazione al drive.
  
 \end_layout
 
 \begin_layout Standard
-Per prima cosa sarebbe quindi opportuno accertarsi dell'effettiva ricezione
- dei frame CAN da parte del drive, concentrandosi sul controllo a livello
+Per prima cosa sarebbe quindi opportuno accertare l'effettiva ricezione
+ dei frame CAN da parte del drive concentrandosi sul controllo a un livello
  di astrazione più alto solo successivamente.
 \end_layout
 
 \begin_layout Standard
-Inoltre l'adattatore PCAN smette di funzionare dopo un certo lasso di tempo,
- è da capire se il problema sia dovuto ad una incompatibilità con il sistema
- operativo o se il prodotto sia difettoso, la seconda ipotesi si può accantonare
- semplicemente utilizzando un adattatore PCAN differente, per la prima invece
- il problema sarebbe di più difficile soluzione.
- 
+L'adattatore PCAN smette di funzionare dopo un determinato lasso di tempo:
+ è da capire se ciò sia dovuto ad una incompatibilità con il sistema operativo
+ o se il prodotto utilizzato sia difettoso.
+ La seconda ipotesi può essere verificata utilizzando semplicemente un adattator
+e PCAN differente; per la prima invece risulta più difficile da accertare.
 \end_layout
 
 \begin_layout Section
@@ -1395,9 +1394,7 @@ Utilizzare ros_canopen
 \end_layout
 
 \begin_layout Standard
-Benchè non sia stato possibile terminare il lavoro in tempo utile, un'opzione
- è lavorare con ros_canopen.
- La documentazione è abbastanza completa, anche se ridotta, e nel caso più
+La documentazione è abbastanza completa, anche se ridotta, e nel caso più
  disperato sarebbe sempre possibile contattare il mantainer per chiarimenti
  sul codice sorgente.
 \end_layout
@@ -1426,18 +1423,18 @@ Utilizzare Kacanopen
 \end_layout
 
 \begin_layout Standard
-Kacanopen è forse la libreria più facile da utilizzare, il suo unico problema
+Kacanopen è forse la libreria più facile da utilizzare; il suo unico problema
  è l'impossibilità di utilizzarla in sinergia con l'adattatore PEAK.
- Una soluzione possibile sarebbe di sostituire l'adattatore PEAK con un
- IXXAT usb-to-CAN FD
+ Una soluzione possibile sarebbe quella di sostituire l'adattatore PEAK
+ con un IXXAT usb-to-CAN FD
 \begin_inset CommandInset citation
 LatexCommand cite
 key "IXXAT"
 
 \end_inset
 
-, che tra i vantaggi ha anche quello di disporre di un attacco rj45 automotive,
- senza quindi bisogno adattatori addizionali.
+, che tra i vantaggi ha anche quello di disporre di un attacco RJ45 automotive,
+ senza quindi necessità di adattatori addizionali.
  
 \end_layout
 
@@ -1498,14 +1495,15 @@ Grazie al professor Andrea Tilli per avermi fatto da relatore nonostante
 \end_layout
 
 \begin_layout Standard
-Grazie ad AlmaAutomotive per aver fornito l'hardware, a Siboni per i motori,
- i drives e il software DriveWatcher.
+Grazie ad AlmaAutomotive per aver fornito l'hardware ed essere poi sparita,
+ a Siboni per i motori, i drives e il software DriveWatcher.
 \end_layout
 
 \begin_layout Standard
 Alla mia famiglia ed ai miei amici per il supporto continuativo nei momenti
- più frustranti, in particolare ad Adileo che in un'ora è riuscito a spiegarmi
- quello che in una settimana non avevo capito da solo.
+ più frustranti, in particolare ad Adileo Barone, per le delucidazioni riguardan
+ti il codice non documentato di ros_canopen e, insieme ad Annarita Angelini,
+ per la revisione della bozza di questo testo.
  
 \end_layout
 

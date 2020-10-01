@@ -1343,7 +1343,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Ambiente di lavoro in cui il progetto è stato portato avanti
+Ambiente di lavoro in cui il progetto è stato svolto
 \end_layout
 
 \end_inset
@@ -1368,26 +1368,25 @@ Debugging del connettore RJ45
 Durante il lockdown e nei mesi successivi, in mancanza di un oscilloscopio
  e di un analizzatore logico, è stato impossibile accertarsi che il drive
  ricevesse effettivamente i segnali inviati.
- Benchè il connettore PCAN disponga di un led che varia la frequenza di
- lampeggiamento in base alla presenza o meno di traffico sul bus, potrebbero
- esserci dei problemi di interferenza o altre complicazioni nel trasporto
- dell'informazione al drive.
+ Il connettore PCAN dispone di un led che varia la frequenza di lampeggiamento
+ in base alla presenza o meno di traffico sul bus, ma ciò non esclude che
+ possano presentarsi dei problemi di interferenza o altre complicazioni
+ nel trasporto dell'informazione al drive.
  
 \end_layout
 
 \begin_layout Standard
-Per prima cosa sarebbe quindi opportuno accertarsi dell'effettiva ricezione
- dei frame CAN da parte del drive, concentrandosi sul controllo a livello
+Per prima cosa sarebbe quindi opportuno accertare l'effettiva ricezione
+ dei frame CAN da parte del drive concentrandosi sul controllo a un livello
  di astrazione più alto solo successivamente.
 \end_layout
 
 \begin_layout Standard
-Inoltre l'adattatore PCAN smette di funzionare dopo un certo lasso di tempo,
- è da capire se il problema sia dovuto ad una incompatibilità con il sistema
- operativo o se il prodotto sia difettoso, la seconda ipotesi si può accantonare
- semplicemente utilizzando un adattatore PCAN differente, per la prima invece
- il problema sarebbe di più difficile soluzione.
- 
+L'adattatore PCAN smette di funzionare dopo un determinato lasso di tempo:
+ è da capire se ciò sia dovuto ad una incompatibilità con il sistema operativo
+ o se il prodotto utilizzato sia difettoso.
+ La seconda ipotesi può essere verificata utilizzando semplicemente un adattator
+e PCAN differente; per la prima invece risulta più difficile da accertare.
 \end_layout
 
 \begin_layout Section
