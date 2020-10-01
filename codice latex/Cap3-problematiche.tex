@@ -2,33 +2,33 @@
 \chapter{Architettura e componenti Software}
 
 \primalettera{P}er permettere al computer di bordo di inviare comandi
-al drive e ricevere un feedback, è necessario trovare un modo di codificare
-i messaggi ROS in CANframes.
+al drive e ricevere un feedback, è necessario trovare un modo per
+codificare i messaggi ROS in CANframes.
 
 Benchè la comunicazione non sia ancora possibile, in questo capitolo
-si elencheranno i passaggi necessari ad eseguire il setup del drive,
-dell'ambiente ROS, delle librerie e strumenti aggiuntivi necessari. 
+si elencheranno i passaggi necessari per eseguire il setup del drive,
+dell'ambiente ROS, delle librerie e degli strumenti aggiuntivi necessari. 
 
 \subsection{Setup drive }
 
 I parametri statici che definiscono il funzionamento del drive devono
-essere programmati attraverso una connessione seriale rs422, possibile
-attraverso il convertitore moxa.
+essere programmati attraverso una connessione seriale rs422 possibile
+attraverso il convertitore MOXA.
 
 Per eseguire il setup del drive è stato necessario utilizzare Drive
-Watcher, un software proprietario fornito dal produttore dei motori,
-questa suite sfortunatamente è compatibile solo con windows xp e necessita
-si un port non disponibile in una virtual machine il che rende impossibile
+Watcher, un software proprietario fornito dal produttore dei motori.
+Questa suite sfortunatamente è compatibile solo con windows xp e necessita
+si un port non disponibile in una virtual machine, il che rende impossibile
 utilizzarla senza avere il sistema operativo installato. È stato quindi
 necessario utilizzare una vecchio computer esclusivamente per programmare
 i parametri del drive. 
 
-\subsubsection{Abilitare Moxa}
+\subsubsection{Abilitare MOXA}
 
-Per abilitare il convertitore moxa è necessario per prima cosa installare
-il driver da CD o file .zip della Moxa, il programma è presente all\textquoteright interno
-della cartella riferita al convertitore Moxa che si possiede. Bisogna
-entrare nella cartella Software, e installare file .exe. 
+Per abilitare il convertitore MOXA è necessario per prima cosa installare
+il drivers da CD o file .zip della MOXA. Il programma è presente all\textquoteright interno
+della cartella riferita al convertitore MOXA che si possiede. Bisogna
+entrare nella cartella software e installare file .exe. 
 
 Per abilitare il port è necessario andare in Pannello di controllo
 > Sistema > Hardware > Gestione Periferiche.
@@ -39,19 +39,19 @@ Proprietà; in Port Settings impostare i seguenti valori : Baud Rate
 = 9600, Data its = 8, Parity = None, Stop bits = 1, Flowcontrol =
 None.
 \begin{figure}[H]
-\centering{}\includegraphics[scale=0.5]{\string"immagini/installazione moxa1\string".png}\caption{Installazione moxa, parte 1}
+\centering{}\includegraphics[scale=0.5]{\string"immagini/installazione moxa1\string".png}\caption{Installazione MOXA, parte 1}
 \end{figure}
 \pagebreak{}
 \par\end{flushleft}
 \item \begin{flushleft}
 Da Schede Seriali Multiport cliccare col tasto destro su Uport 1130I
 e aprire Proprietà; in Ports Configuration aprire Port Setting della
-COM in uso dalla Moxa e impostare : Fast Flush su Enable e Interface
+COM in uso dalla MOXA e impostare : Fast Flush su Enable e Interface
 su RS-422.
 \begin{figure}[H]
 
 \begin{centering}
-\includegraphics[scale=0.5]{\string"immagini/installazione moxa2\string".png}\caption{Installazione moxa, parte2}
+\includegraphics[scale=0.5]{\string"immagini/installazione moxa2\string".png}\caption{Installazione MOXA, parte2}
 \par\end{centering}
 \end{figure}
 \par\end{flushleft}
@@ -62,16 +62,16 @@ su RS-422.
 Per installare il software basta semplicemente estrarre e aprire il
 file Setup-DriveWatcher-407.exe. 
 
-Prima di modificare i parametri bisogna accertarsi che la moxa sia
-connessa al driver e che la parte logica del driver sia alimentata
-a 24V, con l'uscita negativa dell'alimentatore messa a terra. 
+Prima di modificare i parametri bisogna accertarsi che la MOXA sia
+connessa al drive e che la parte logica del drive sia alimentata a
+24V, con l'uscita negativa dell'alimentatore messa a terra. 
 
 Si esegue un settaggio della comunicazione attraverso la modalità
 \textquotedbl{}Communication Settings\textquotedbl{}, impostando la
 ComPort designata in precedenza e cercando il nodo attivo attraverso
 il \textquotedbl{}search node tool\textquotedbl{}. L'ultimo tool menzionato
-eseguirà uno sweep completo di tutti i nodi disponibili, indicando
-quelli attivi con un colore differente. 
+eseguirà uno sweep completo di tutti i nodi disponibili indicando
+quelli attivi in un colore differente. 
 
 \begin{figure}[H]
 \begin{centering}
@@ -86,10 +86,10 @@ attraverso il tool \textquotedbl{}ComPort communication test\textquotedbl{}
 \subsection{Programmazione dei parametri}
 
 I parametri si possono visualizzare nella sezione \textquotedbl{}Parameters
-configuration\textquotedbl{}, ogni parametro dispone di una descrizione
-a lato, quindi in questo documento non si elencheranno tutti, ma solo
-i più importanti ai fini del progetto. Per farsi un'idea più dettagliata
-si possono consultare il manuale Siboni \textquotedbl{}Istruzioni
+configuration\textquotedbl{}; ogni parametro dispone di una descrizione
+a lato, pertanto in questo documento non si elencheranno tutti, ma
+solo i più importanti ai fini del progetto. Per farsi un'idea più
+dettagliata si possono consultare il manuale Siboni \textquotedbl{}Istruzioni
 Drive Watcher\textquotedbl{} \cite{Siboni2018} e quello completo
 del drive Microphase \textquotedbl{}Micro Digital One\textquotedbl{},
 capitolo 9. \cite{Microphase}
@@ -100,7 +100,7 @@ capitolo 9. \cite{Microphase}
 \includegraphics[scale=0.5]{immagini/parametri}\caption{lo strumento Parameters Configuration}
 \par\end{centering}
 \end{figure}
-Fare particolare attenzione ai parametri: 
+Fare particolare attenzione ai seguenti parametri: 
 \begin{description}
 \item [{C7}] numero nodo = 1 di default
 \item [{C9}] modo di funzionamento del drive, impostato a 5 per il CANopen
@@ -112,13 +112,13 @@ sinusoidale
 \section{Setup ROS}
 
 L'installazione di ROS varia in base alle release. In questo progetto
-è stata utilizzata Melodic Morenia, ma in base alla distro di linux
+è stata utilizzata Melodic Morenia, ma in base alla distro di Linux
 installata sul computer di bordo potrebbe essere necessario installare
 una release differente. Ritenendo inutile descrivere il processo di
-installazione di una singola versione quando è disponibile online
-ampia documentazione a riguardo, si include qui il link al sito ufficiale
-di ROS, dove sono indicati tutti gli step necessari per le varie piattaforme:
-\url{https://wiki.ros.org/ROS/Installation}.
+installazione di una singola versione dal momento che è disponibile
+online ampia documentazione a riguardo, si rimanda al sito ufficiale
+di ROS, ove sono indicati tutti gli step necessari per le varie piattaforme:
+\url{https://wiki.ROS.org/ROS/Installation}.
 
 Successivamente, si utilizza Catkin per creare un workspace in cui
 sviluppare il progetto:
@@ -137,30 +137,405 @@ Dall'interno della cartella catkin\_ws, si scrive nel terminale:
 
 \begin{lstlisting}
 $ source devel/setup.bash
-$ echo $ROS_PACKAGE_PATH /home/youruser/catkin_ws/src:/opt/ros/kinetic/share
+$ echo $ROS_PACKAGE_PATH /home/youruser/catkin_ws/src:/opt/ROS/
+kinetic/share
 \end{lstlisting}
 
 Questo comando, insieme a catkin\_make, andrà ripetuto per sicurezza
-ad ogni utilizzo del workspace e soprattuto dopo l'installazione di
-nuovi pacchetti. 
+ad ogni utilizzo del workspace e, soprattuto, dopo l'installazione
+di nuovi pacchetti. 
 
 \section{Setup PCAN}
 
-Benchè dei driver per adattatore PCAN siano installati di default
-nel kernel linux, per cui i canali CAN sono gestiti come dispositivi
+Benchè dei drivers per adattatore PCAN siano installati di default
+nel kernel Linux, sicchè i canali CAN sono gestiti come dispositivi
 netdev, per utilizzare il software di visualizzazione pcan\_view e
-l'API pcan\_basic è necessario installare i driver proprietari. 
+l'API pcan\_basic è necessario installare i drivers proprietari. 
 
-I driver sono disponibili sul sito della PEAK system all'indirizzo
-\url{https://www.peak-system.com/fileadmin/media/linux/files/peak-linux-driver-8.10.2.tar.gz}.
+I drivers sono disponibili sul sito della PEAK system all'indirizzo
+\url{https://www.peak-system.com/fileadmin/media/Linux/index.htm}.
 
-Per installarli basta decomprimere il file, aprire la cartella su
-un terminale e utilizzare i seguenti comandi: 
+Per installarli basta decomprimere il file e aprire la cartella su
+un terminale con i seguenti comandi: 
 
 \begin{lstlisting}
-$ make clear
-$ sudo make
+$ make
 $ sudo make install
 \end{lstlisting}
 
+Sullo stesso terminale, per attivare i drivers, si utilizza: 
+
+\begin{lstlisting}
+$ sudo modprobe peak_usb
+\end{lstlisting}
+
+Modprobe è un comando di Linux che aggiunge un modulo al kernel per
+estendere le sue funzionalità; in questo caso stiamo aggiungendo il
+modulo can0, necessario per utilizzare una linea seriale CAN e per
+il funzionamento dell'adattatore. Controlliamo che can0 sia attivo:
+
+\begin{lstlisting}
+$ ip link show
+\end{lstlisting}
+
+Ip link è un altro comando che ci permette di controllare i dispositivi
+di rete disponibili e di modificarne le impostazioni. Ora si crea
+una linea can0, di tipo can, con baudrate a 250k in questo modo: 
+
+\begin{lstlisting}
+$ sudo ip link set up can0 type can bitrate 250000
+\end{lstlisting}
+
+Se vogliamo una baud a 500k basta modificare il bitrate. Ora il led
+dell'adattatore dovrebbe lampeggiare lentamente indicando una connessione
+attiva. Per disabilitare l'adattatore in caso di malfunzionamenti,
+si procede con il comando:
+\begin{lstlisting}
+$ sudo ip link set down can0
+\end{lstlisting}
+
+
+\section{Can-utils}
+
+Il primo tentativo di invio di frame CANopen ha utilizzato can-utils. 
+
+Can-utils è una suite di strumenti di analisi per terminale che comprende
+candump (log del traffico su linea can0) e cansend (invio di frame
+can). 
+
+È disponibile sul repository Debian, quindi per installarla basta
+il comando: 
+
+\begin{lstlisting}
+$ sudo apt-get install can-utils
+\end{lstlisting}
+
+Per vedere che messaggi passano attraverso la linea can0, il comando
+è:
+
+\begin{lstlisting}
+$ candump can0
+\end{lstlisting}
+
+Per inviare un frame CAN, il comando è: 
+
+\begin{lstlisting}
+$ cansend can0 <CAN frame>
+\end{lstlisting}
+
+Il CAN frame ha questa forma: <can\_id>\#<data>
+\begin{description}
+\item [{CAN\_id}] definisce il nodo che deve ricevere i dati
+\item [{data}] definisce il contenuto del frame, che a sua volta deve seguire
+lo standard CANopen
+\end{description}
+Cansend permette solo di inviare CAN frames codificati in binario
+o esadecimale, per inviare un frame CANopen è necessario specificare
+ogni volta il tipo di messaggio inviato (NMT, SDO, PDO) e leggere
+la risposta al livello più basso. I frames in uscita vengono registrati
+da candump, ma il drive non risponde, anche a causa dell'assenza di
+un segnale heartbeat da parte del computer, interpretabile dal drive
+come un errore di comunicazione.
+
+\section{CANopenSocket}
+
+Per ovviare a questo problema è stato utilizzato CANopenSocket, che
+permette di inviare frames CANopen ad un livello di astrazione più
+alto, risparmiando tempo ed evitando errori di codifica del messaggio.
+Esso permette inoltre di generare automaticamente un segnale di hearbeat.
+CANopenSocket fornisce anche il controllo della macchina a stati tramite
+comandi NMT di tipo verbose.
+
+L'installazione di CANopenSocket si esegue clonando il repository
+in una cartella desiderata: 
+
+\begin{lstlisting}
+$ git clone https://github.com/CANopenNode/CANopenSocket.git 
+$ cd CANopenSocket 
+$ git submodule init 
+$ git submodule update
+\end{lstlisting}
+
+All'interno del pacchetto sono forniti due strumenti: canopend e canopencomm. 
+
+\subsection{canopend}
+
+Canopend fornisce un'implementazione di un dispositivo CANopen con
+funzionalità di master, accessibile all'interno della cartella in
+cui la suite è installata con:
+\begin{lstlisting}
+$ cd canopend
+$ make
+$ ./app/canopend --help 
+$ ./app/canopend can0 -i 2 -c " "
+\end{lstlisting}
+
+Il primo comando elenca le opzioni possibili di utilizzo con canopend,
+mentre il secondo è così strutturato: 
+\begin{description}
+\item [{can0}] specifica l'interfaccia utilizzata
+\item [{-i}] specifica l'indirizzo del nodo che si vuole creare; nel caso
+in cui non venga incluso l'indirizzo, esso viene preso dall'object
+dictionary contenuto nella cartella /objDict. Può essere qualsiasi
+indirizzo tranne 1, che è riservato al drive
+\item [{-c}] abilita l'interfaccia di comando per funzionalità master;
+impostandolo come stringa vuota (\textquotedbl{} \textquotedbl{})
+viene usato il socket di default, che ci permette di inviare messaggi
+agli altri nodi attraverso canopencomm
+\end{description}
+
+\subsection{canopencomm}
+
+Mentre l'ultimo comando di canopend è attivo si apre un altro terminale
+e a partire dalla cartella principale di CANopenSocket: 
+
+\begin{lstlisting}
+$ cd canopencomm
+$ make
+$ ./canopencomm --help
+\end{lstlisting}
+
+Con le opzioni disponibili ora è possibile inviare frame CANopen attraverso
+l'interfaccia can0. 
+
+Per testarne il funzionamento si può andare a leggere la frequenza
+dell'heartbeat: 
+
+\begin{lstlisting}
+$ ./canopencomm [1] 4 read 0x1017 0 i16
+\end{lstlisting}
+
+Sorgono però una serie di complicazioni: innanzi tutto CANopenSocket
+permette di inviare frame con standard CiA 301, ma non con il CiA
+402 che ci serve a controllare i profili di moto del drive. Sebbene
+sia possibile andare a modificare l'indirizzo dell'object dictionary
+che contiene ControlWord e VelocityTarget, il drive non risponde.
+Inoltre se si esegue un candump della linea seriale, si vede che la
+comunicazione viene interrotta dopo circa trenta secondi. Sono state
+tentate diverse soluzioni, e sebbene con un'interfaccia virtuale (vcan0),
+la comunicazione funzioni e non si riscontrino problemi di alcun genere,
+in questo caso non si è trovato nessuna soluzione al problema, che
+potrebbe essere causato da un adattatore difettoso, da un errore del
+driver o da interferenze sul bus.
+
+\section{Kacanopen\cite{KITmedical2016}}
+
+Il fatto che non si sia avuto successo con CANopenSocket, ha suggerito
+di passare ad una libreria ROS che permettesse di connettersi direttamente
+con il drive attraverso l'adattatore PCAN e che contenesse al suo
+interno tutti gli strumenti necessari al controllo di un drive. 
+
+Kacanopen è sembrato un'ottima opzione, in quanto fornisce diversi
+strumenti utili: drivers per la maggior parte degli adattatori usb
+to CAN, un master CANopen integrato, protocolli SDO, PDO ed NMT facilmente
+utilizzabili e un bridge ROS, che rende possibile pubblicare i nodi
+CANopen come nodi ROS in modo da poterli controllare semplicemente
+attraverso messaggi del tipo joint\_state.
+
+Un altro pregio della libreria è la documentazione estensiva.
+
+L'installazione di Kacanopen si esegue scaricando la libreria da github
+all'interno del workspace ROS: 
+
+\begin{lstlisting}
+$ cd <catkin workspace>/src 
+$ git clone https://github.com/KITmedical/Kacanopen.git 
+$ cd .. 
+$ catkin_make -DDRIVER=socket
+\end{lstlisting}
+
+Lo studio della la libreria Kacanopen, ha evidenziato due problematiche
+che non la rendono adatta al progetto. In primo luogo la libreria
+Kacanopen non è aggiornata, è stata progettata per lavorare con ROS
+jade, che è una versione di ROS ormai deprecata. 
+
+Nonostante questo, la libreria potrebbe comunque funzionare, sebbene
+in maniera leggermente limitata. Infatti la modularità di ROS permette
+a nodi costruiti con una versione precedente di funzionare lo stesso,
+a patto che la sintasssi dei messaggi sia compatibile con le versioni
+più recenti, e che si possa eseguire la build della libreria a partire
+dal codice sorgente attraverso catkin\_make. 
+
+Kacanopen funziona anche indipendentemente da ROS, utilizzando cmake
+per eseguire la build. 
+
+A rendere impossibile l'utilizzo di Kacanopen (almeno con il connettore
+PCAN) senza una sostanziale riscrittura del codice sono i drivers
+di cui ha bisogno per funzionare con un adattatore PCAN: il codice
+è infatti progettato per funzionare con una versione precedente dei
+drivers. È possibile installare i drivers compatibili con il comando: 
+
+\begin{lstlisting}
+$ wget http://www.peak-system.com/fileadmin/media/Linux/files/
+peak-linux-driver-7.15.2.tar.gz tar -xzf peak-linux-driver-7.15.2.tar.gz 
+$ mv peak-linux-driver-7.15.2 ~/peak 
+$ cd ~/peak 
+$ make
+\end{lstlisting}
+
+\cite{kacanopen2016}
+
+Una volta scaricati, non sembrano essere compatibili con la versione
+del sistema operativo, infatti durante il processo di installazione
+una grossa porzione del codice dà errori. 
+
+È stato fatto il tentativo di utilizzare Kacanopen con drivers aggiornati,
+aggiungendo i drivers peak\_usb all'interno di /kacanopen/src/drivers\_lgpl
+e utilizzando poi:
+
+\begin{lstlisting}
+$ catkin_make -DDRIVER=peak_usb
+\end{lstlisting}
+
+ma non sono stati ottenuti i risultati sperati.
+
+\section{ros\_canopen \cite{ros_canopen2015}}
+
+Un'altra opzione che sembra promettente è la libreria ros\_canopen.
+Parte del progetto ros-industrial\cite{rosindustrial2020}, che ha
+l'obiettivo di estendere le capacità di ROS ad hardware ed applicazioni
+industriali, ros\_canopen è una libreria che fornisce il supporto
+di dispositivi CANopen all'interno di ROS. 
+
+Questo software fornisce gli stessi strumenti di Kacanopen, ma ha
+il pregio di essere aggiornato (il mantainer attuale è Mathias Lüdtke,
+\url{https://github.com/ipa-mdl}) e funziona con i drivers can integrati
+nel kernel Linux. 
+
+L'installazione è simile a Kacanopen, all'interno della cartella /src
+del workspace ROS:
+
+\begin{lstlisting}
+$ git clone https://github.com/ros-industrial/ros_canopen
+$ cd ..
+$ catkin_make
+\end{lstlisting}
+
+La libreria è composta da diversi strumenti:
+\begin{description}
+\item [{canopen\_master}] implementa un master secondo lo standarc CiA
+301, con supporto di sincronizzazione infra-processo. 
+\item [{canopen\_chain\_node}] controlla un bus CANopen con uno o più nodi
+che sono configurati attraverso un file EDS/DCF
+\item [{canopen\_motor\_node}] fornisce un'interfaccia ROS\_control a motori
+conformi allo standard CiA 402
+\item [{socketcan\_bridge}] espone i frames CAN ai messaggi ROS e viceversa
+\item [{socketcan\_interface}] fornisce un'interfaccia CAN generica e un'implementazione
+dei drivers basata su socketcan
+\item [{canopen\_402}] contiene l'implementazione del protocollo CiA 402
+DSP
+\item [{can\_msgs}] definisce un messaggio ros\_canopen tipo
+\end{description}
+\begin{figure}[H]
+
+\begin{centering}
+\includegraphics[scale=0.5]{immagini/schema_ros_canopen}\caption{Schema di funzionamento di ros\_canopen}
+\par\end{centering}
+\end{figure}
+
+
+\section{File .edf .urdf}
+
+Per funzionare, sia Kacanopen che ros\_canopen hanno bisogno di due
+file: EDS (Electronic Data Sheet) e URDF (Universal Robotic Description
+Format) 
+
+\subsection{EDF}
+
+L'Electronic Data Sheet è un template fornito dall'azienda produttrice
+dell'object dictionary e contiene informazioni su tutti gli oggetti
+dell'OD, ma non sin i valori, che vengono specificati dal progettista
+finale. 
+
+Un esempio di oggetto all'interno del file .edf è il seguente: 
+
+\begin{lstlisting}
+[604E]
+ParameterName=Vl Velocity Reference 
+ObjectType=0x07 
+DataType=0x0007 
+AccessType=rw 
+PDOMapping=0
+\end{lstlisting}
+
+Fortunatamente il drive Microphase usa lo standard CiA 402, per cui
+esiste già un file pronto all'uso tra quelli disponibili nella libreria
+Kacanopen.
+
+Per utilizzi esterni a Kacanopen, il file 402.eds è stato inserito
+nella cartella /drivers e librerie/EDS nel repository github di questa
+tesi.
+
+\subsection{URDF}
+
+L'Universal Robotic Description Format descrive apputo il robot nella
+sua completezza da un punto di vista cinematico, ed è formattato in
+xml.
+
+Per creare un file URDF si abbozza innanzitutto una lista dei collegamenti
+e delle articolazioni del robot\cite{urdf_file}: 
+
+\begin{lstlisting}
+<robot name="test_robot">
+  <link name="link1" />
+  <link name="link2" />
+  <link name="link3" />
+  <link name="link4" />
+
+  <joint name="joint1" type="continuous">
+    <parent link="link1"/>
+    <child link="link2"/>
+  </joint>
+
+  <joint name="joint2" type="continuous">
+    <parent link="link1"/>
+    <child link="link3"/>
+  </joint>
+
+  <joint name="joint3" type="continuous">
+    <parent link="link3"/>
+    <child link="link4"/>
+  </joint>
+</robot>
+\end{lstlisting}
+
+Nel file vanno prima specificati i nomi dei vari collegamenti, poi
+i gradi di \textquotedbl{}parentela\textquotedbl{}, vale a dire a
+quali collegamenti si attaccano le articolazioni.
+
+In seguito vanno posizionate nello spazio le articolazioni attraverso
+il tag \textquotedbl{}origin\textquotedbl{} specificando la distanza
+e l'angolo di rotazione di ognuna rispetto alla sua origine; e infine
+con il tag \textquotedbl{}axis\textquotedbl{} viene specificato il
+modo in cui si muovono le articolazioni. 
+
+\begin{lstlisting}
+<robot name="test_robot">
+  <link name="link1" />
+  <link name="link2" />
+  <link name="link3" />
+  <link name="link4" />
+
+  <joint name="joint1" type="continuous">
+    <parent link="link1"/>
+    <child link="link2"/>
+    <origin xyz="5 3 0" rpy="0 0 0" />
+    <axis xyz="-0.9 0.15 0" />
+  </joint>
+
+  <joint name="joint2" type="continuous">
+    <parent link="link1"/>
+    <child link="link3"/>
+    <origin xyz="-2 5 0" rpy="0 0 1.57" />
+    <axis xyz="-0.707 0.707 0" />
+  </joint>
+
+  <joint name="joint3" type="continuous">
+    <parent link="link3"/>
+    <child link="link4"/>
+    <origin xyz="5 0 0" rpy="0 0 -1.57" />
+    <axis xyz="0.707 -0.707 0" />
+  </joint>
+</robot>
+\end{lstlisting}
 

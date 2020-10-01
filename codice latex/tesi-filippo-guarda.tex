@@ -17,18 +17,22 @@
  bookmarks=true,bookmarksnumbered=false,bookmarksopen=true,bookmarksopenlevel=1,
  breaklinks=true,pdfborder={0 0 1},backref=false,colorlinks=false]
  {hyperref}
-\hypersetup{pdftitle={Cloud Migration},
- pdfauthor={Andrea Decorte},
- pdfsubject={Cloud Computing},
- pdfkeywords={cloud, SCE, migration, enterprise, IBM}}
+\hypersetup{pdftitle={Motion Control Almax},
+ pdfauthor={Filippo Guarda},
+ pdfsubject={motion control of a bldc motor},
+ pdfkeywords={motion control, ROS, CANopen, AlmaX, rover, BLDC motor}}
 
 \makeatletter
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
+%% Because html converters don't know tabularnewline
+\providecommand{\tabularnewline}{\\}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
 % Customized LaTeX preamble %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % --- Page geometry --- %
 \usepackage{geometry}
-\usepackage{url}
 \geometry{
 verbose,a4paper,lmargin=0.17\paperwidth,
 rmargin=0.1\paperwidth
@@ -54,6 +58,7 @@ rmargin=0.1\paperwidth
 \usepackage{amsmath,amsfonts,amssymb,amsthm,multicol}
 \usepackage{epsfig,verbatim}
 \usepackage{ifthen}
+
 
 % --- Big letters at the beginning of chapters --- %
 % "ptmri" is the italic version of "ptmr"
@@ -240,7 +245,7 @@ AlmaX}
 \annoaccademico{2019-2020}
 \maketitle
 
-\dedica{To everybody}
+\dedica{A Giorgio, per avermi insegnato che prima viene il dovere. }
 
 \begin{frontmatter}
 
@@ -268,123 +273,194 @@ AlmaX}
 \chapter*{Introduzione\aggiungiAIndice{Introduzione}}
 
 \primalettera{L}a ERC, European Rover Challenge, è una competizione
-a livello europeo organizzata dal 2014 in Polonia. Anche l'università
+a livello europeo, organizzata dal 2014 in Polonia. Anche l'università
 di Bologna, in collaborazione con la sede di Forlì, partecipa a questa
 competizione con il gruppo AlmaX, che ha il compito di sviluppare
-un rover che rispetti le specifiche fornite nel regolamento \cite{rules},
-tra cui: 
+un rover che rispetti le specifiche fornite nel regolamento \cite{Bogusz2020},
+tra queste caratteristiche: 
 \begin{itemize}
 \item Un peso pari o inferiore a 50kg.
 \item La capacità di movimento autonomo attraverso computer vision e mapping
 topografico, oltre alla possibilità di inviare comandi al rover da
 una base station via link radio.
-\item La capacità del rover di attraversare ostacoli e terreno accidentato
+\item La capacità del rover di attraversare ostacoli e un terreno accidentato
 simile al suolo marziano.
 \item La capacità del rover di interagire con un pannello di controllo fisico
 \end{itemize}
-L'argomento di questa tesi è il benchmark del motion control del Rover. 
+Inserito nel contesto più ampio dello sviluppo del rover, l'argomento
+di questa tesi è il benchmark della parte relativa al motion control.
+
+Durante la durata del progetto è stato eseguito il setup completo
+dell'hardware e sono state testate le funzionalità dei vari software
+disponibili con lo scopo di trovare il miglior candidato per il completamento
+del progetto.
+
+Tutti i materiali e la documentazione inclusi in questa tesi (manuali,
+drivers, immagini, bibliografia e file lyx e latex) sono disponibili
+su github al link \url{https://github.com/FilippoGuarda/MotionControlAlmax}.
 
 \section{Pipeline}
 
-I motori BLDC forniti sono Siboni ProPlanet S60 ed S40 dotati di freno
-integrato ed encoder incrementale, ognuno controllato da un drive
-MicroPhase MicroOne, che riceve in broadcast istruzioni attraverso
-un seriale CAN. Le istruzioni sono codificate in CANopen da un adattatore
-Peak Usb collegato a un computer di bordo su cui è installato ROS
-(Robot Operative System), il quale a sua volta riceve messaggi da
-una base station sulla quale è sempre installato ROS.
+L'obiettivo di questa tesi è di permettere ad una base station di
+controllare i motori BLDC a bordo del rover attraverso messaggi. Tali
+messaggi specificano un target di velocità da raggiungere che viene
+tradotto in un comando leggibile dal drive che si occupa di raggiungerlo
+controllando il motore in PWM con curve di accelerazione definite
+a priori.
 
-\begin{comment}
-TODO inserire immagine
-\end{comment}
-.
+Il drive a sua volta riceve un feedback dall'encoder del motore e
+deve inviare al computer di bordo la conferma di effettivo raggiungimento
+del target o, in alternativa, la presenza di errori.
 
-Nel capitolo 1 si studieranno nello specifico l'hardware e i metodi
-utilizzati per connettere i diversi elementi del progetto, nel capitolo
-2 si studierà il software necessario a permettere la comunicazione
-tra i componenti. Nel capitolo 3 si elencheranno le problematiche
-incontrate. 
+\begin{figure}[H]
+
+\begin{centering}
+\includegraphics[scale=0.5]{immagini/pipeline}\caption{Pipeline del Motion Control}
+\par\end{centering}
+\end{figure}
+
+
+\section{Capitolo 1}
+
+Nel primo capitolo si analizzano i componenti hardware che fanno parte
+del motion control del Rover: motore, drive, adattatori e alimentatori.
+
+Si mostra inoltre il corretto cablaggio degli adattatori che permettono
+la comunicazione con il drive da parte del computer di bordo, oltre
+ai connettori di potenza e di feedback del motore.
+
+\section{Capitolo 2}
+
+Il secondo capitolo è dedicato ad una introduzione a ROS e CANopen:
+il primo, un middleware specifico per la robotica, il secondo, uno
+standard di comunicazione necessario a controllare il drive.
+
+La prima sezione è dedicata a ROS e ai suoi componenti: master, nodi,
+messaggi e topics. Come ROS li utilizza per permettere la comunicazione
+tra macchine differenti e per ampliare le sue capacità con strumenti
+e librerie esterne.
+
+La seconda sezione è dedicata a al bus CAN, attraverso il quale il
+protocollo CANopen(terza sezione) muove pacchetti di informazione
+(PDO ed SDO) attraverso i diversi nodi che fanno parte del sistema
+di motion control. 
+
+\section{Software}
+
+Nel terzo capitolo si elencano i diversi strumenti utilizzati nei
+successivi tentativi di comunicare con il drive, partendo da quelli
+a livello più basso, fino ad arrivare ai due candidati più promettenti
+(due librerie di ROS: ros\_canopen e Kacanopen) che possono eseguire
+il bridging tra messaggi ROS e frame CANopen.
 
 \chapter{Architettura e componenti Hardware}
 
 \section{Motori BLDC }
 
 \primalettera{O}bbiettivo del progetto è il controllo di un motore
-BLDC, in questo caso i motori forniti sono Siboni S60 ed S40. Questi
-motori hanno le seguenti specifiche, che ci saranno utili più tardi
-per inserirle nei parametri del drive: 
+BLDC; nel caso in esame, i motori forniti sono Siboni S60 ed S40.
+Questi motori hanno le seguenti specifiche, che ci saranno utili più
+tardi per inserirle nei parametri del drive\cite{Siboni2020}: 
 
-\begin{comment}
-INSERIRE TABELLA
-\end{comment}
+\begin{table}[H]
+\centering{}%
+\begin{tabular}{|c|c|}
+\hline 
+Tensione di alimentazione & 32V\tabularnewline
+\hline 
+Potenza nominale & 400W\tabularnewline
+\hline 
+Coppia di stallo & 1.37Nm\tabularnewline
+\hline 
+Corrente di stallo & 9.40A\tabularnewline
+\hline 
+Velocità nominale & 3000rpm\tabularnewline
+\hline 
+Momento di inerzia rotorico & 0.30$kg*m^{2}x10^{-4}$\tabularnewline
+\hline 
+\end{tabular}\caption{Specifiche principali del motore Siboni ProPlanet S060 2B305}
+\end{table}
 
-I motori dispongono di connettori di tipo %
-\begin{comment}
-INSERIRE TIPOLOGIA CONNETTORI
-\end{comment}
-, con la seguente schematica: 
+I motori dispongono di connettori di tipo molex a 6 e 12 pin, con
+le seguenti schematiche\cite{Microphase}: 
 
-\begin{comment}
-INSERIRE IMMAGINE
-\end{comment}
+\begin{figure}[H]
+
+\centering{}\includegraphics[scale=0.5]{immagini/cavo-encoder}\caption{Collegamento cavo encoder}
+\end{figure}
+
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[scale=0.5]{immagini/cavo-motore}\caption{Collegamento cavo motore}
+\par\end{centering}
+\end{figure}
 
 
 \section{Computer di bordo}
 
-Nel rover, il computer di bordo è una UPboard, molto comoda in quanto
-estremamente modulare e dotata di moduli extra. Tra i muduli disponibili
-è presente anche uno dotato di porte seriali CAN e rs422, molto utile
-ai fini del progetto in quanto riduce il numero di connettori extra. 
+Nel rover, il computer di bordo è una UPboard\cite{UPboard,UPboard2020},
+molto comoda in quanto estremamente modulare e dotata di moduli extra.
+Tra i muduli disponibili ne è presente anche uno dotato di porte seriali
+CAN e rs422, molto utile ai fini del progetto in quanto riduce il
+numero di connettori extra. 
 
-Per questo progetto, non essendo disponibile la UPboard è stato utilizzato
-un normale computer che utilizza linux come OS.
+Per questo progetto, non essendo disponibile la UPboard, è stato utilizzato
+un normale computer che utilizza Linux come OS.
 
 \section{Drive}
 
-Il drive che guida il motore in PWM è un Microphase MicroOne, con
-le seguenti specifiche: 
+Il drive che guida il motore in PWM è un Microphase Micro Digital
+One, con le seguenti specifiche\cite{Microphase2020}: 
 
-\begin{comment}
-INSERIRE TABELLA
-\end{comment}
+\begin{table}[H]
+
+\begin{centering}
+\begin{tabular}{|c|c|}
+\hline 
+Range di tensione & 19-84V\tabularnewline
+\hline 
+Corrente nominale & 10A\tabularnewline
+\hline 
+Corrente di picco & 20A\tabularnewline
+\hline 
+Potenza nominale & 580W\tabularnewline
+\hline 
+Potenza di picco & 1060W\tabularnewline
+\hline 
+\end{tabular}\caption{Specifiche principali del drive MicroDigitalOne}
+\par\end{centering}
+\end{table}
 
 Il drive è collegato al motore attraverso due connettori. Uno di potenza,
-attraverso cui passano le fasi della PWM, il ground e la linea che
-disattiva il freno integrato nel motore. L'altro responsabile della
-ricezione del feedback di posizione da parte dell'encoder incrementale
+attraverso il quale passano le fasi della PWM, il ground e la linea
+che disattiva il freno integrato nel motore. L'altro responsabile
+della ricezione del feedback di posizione da parte dell'encoder incrementale
 e dei sensori di Hall. 
 
 Sul drive sono anche presenti due attacchi RJ45 che il drive usa per
 comunicare attraverso connessione seriale. 
 
-\section{Convertitore Moxa e adattatore PCAN}
+\section{Convertitore MOXA e adattatore PCAN}
 
 Per connettere il drive ai due computer utilizzati, uno per la programmazione
 dello stesso e uno per il controllo, si usano due connettori da usb
-a seriale
+a seriale:
 
 \subsection{MOXA}
 
 Per programmare parametri e registri del drive è necessario utilizzare
 un software proprietario (di cui si parlerà nel dettaglio nel capitolo
 2) che comunica attraverso una connessione seriale rs 422 resa possibile
-da un convertitore moxa
-
-\begin{comment}
-INSERIRE IMMAGINE
-\end{comment}
-
+da un convertitore MOXA. Il convertitore è dotato di tre led di stato:
+uno che indica l'accensione, uno che si illumina in trasmissione e
+uno che si illumina in ricezione.
 
 \subsection{PCAN}
 
-Invece la comunicazione con il computer di bordo avviene su bus CAN,
-attraverso l' adattatore PCAN.
+La comunicazione con il computer di bordo avviene su bus CAN, attraverso
+l' adattatore PCAN\cite{PEAK2019}.
 
-\begin{comment}
-INSERIRE IMMAGINE E BIBLIOGRAFIA
-\end{comment}
-
-L' adattatore è dotato di un led che ne comunica lo stato: 
+L'adattatore è dotato di un led che ne comunica lo stato: 
 \begin{itemize}
 \item LED acceso: usb connessa al computer, nessuna comunicazione
 \item LED lampeggia lentamente: adattatore attivo
@@ -393,52 +469,64 @@ L' adattatore è dotato di un led che ne comunica lo stato:
 
 \section{Adattatori}
 
-Sia il convertitore moxa che il PCAN utilizzano per la connessione
-seriale degli attacchi DB9, di cui solo una parte dei pin è effettivamente
-utilizzata. Questo è un problema in quanto il drive dispone solo di
-attacchi rj45. Per ovviare al problema sono stati cablati a mano due
-adattatori. 
+Sia il convertitore MOXA che il PCAN utilizzano, per la connessione
+seriale, degli attacchi DB9, che utilizzano effettivamente solo una
+parte dei pin. Questo è un problema in quanto il drive dispone solo
+di attacchi RJ45. Per ovviarlo sono stati cablati a mano due adattatori. 
 
 \subsection{Adattatore per MOXA}
 
-Benchè dalla documentazione del convertitore moxa non venga specificato
-su quali pin passi la linea seriale rs422, nella confezione è fornito
-un attacco extra che presenta connessioni ben definite. Utilizzando
-la schematica degli attacchi RJ45 fornita nel datasheet del drive
+Benchè la documentazione del convertitore MOXA specifichi su quali
+pin passi la linea seriale rs422, nella confezione è fornito un attacco
+extra che presenta connessioni ben definite. Utilizzando la schematica
+degli attacchi RJ45 fornita nel datasheet del drive\cite{MicrophaseInterface}
 è stato cablato a mano un cavo ethernet con un RJ45 da un lato e cavi
-scoperti dall'altro, in modo da poterli connettere con l'attacco fornito.
+scoperti dall'altro, in modo da poterli connettere all'attacco fornito.
 
-\begin{comment}
-INSERIRE IMMAGINE E BIBLIOGRAFIA
-\end{comment}
+\begin{figure}[H]
+
+\begin{centering}
+\includegraphics[scale=0.5]{immagini/adattatore-MOXA}\caption{Adattatore DB9-RJ45(sinistra) insieme al MOXA}
+\par\end{centering}
+\end{figure}
+
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[scale=0.5]{immagini/connessioni-moxa}\caption{Schematica adattatore DB9-RJ45 per MOXA}
+\par\end{centering}
+\end{figure}
 
 
 \subsection{Adattatore per PCAN}
 
-Anche l' adattatore Peak dispone di un attacco db9, di cui solo 4
-pin vengono utilizzati. Il bus can passa attraverso i pin 2 (Can H)
-e 7 (Can L) %
-\begin{comment}
-controllare pin effettivi
-\end{comment}
-questi due pin devono essere collegati ai pin n. 2 e 3 dell'attacco
-rj45. Questa connessione si effettua tramite un adattatore cablabile
+Anche l'adattatore PCAN dispone di un attacco DB9, che utilizza solo
+4 pin. Il bus can passa attraverso i pin 2 (Can H) e 7 (Can L) questi
+due pin devono essere collegati ai pin n. 2 e 3 dell'attacco RJ45.
+Questa connessione si effettua tramite un adattatore cablabile a mano
 di facile reperibilità. Quello utilizzato in questo progetto nello
-specifivo è stato acquistato su amazon (link prodotto) ed ha i pin
-dell'attacco rj45 femmina codificati tramite i colori dei cavetti
-che vanno inseriti manualmente nell'attacco db9 femmina, secondo questa
-schematica: 
+specifico è stato acquistato su Amazon (\url{https://www.amazon.it/gp/product/B00006IRQA/ref=ppx_yo_dt_b_asin_title_o01_s00?ie=UTF8&psc=1})
+ed ha i pin dell'attacco RJ45 femmina codificati tramite i colori
+dei cavetti che vanno inseriti manualmente nell'attacco DB9 femmina,
+secondo questa schematica\cite{PEAK2019}: 
 
-\begin{comment}
-INSERIRE IMMAGINE E BIBLIOGRAFIA
-\end{comment}
+\begin{figure}[H]
+
+\centering{}\includegraphics[scale=0.5]{immagini/PCAN-db9-to-rj45}\caption{Schematica adattatore DB9-RJ45 per PCAN}
+\end{figure}
+
+\begin{figure}[H]
+
+\begin{centering}
+\includegraphics[scale=0.5]{immagini/adattatore-e-PCAN}\caption{Adattatore DB9-RJ45(centro) insieme al PCAN(sinistra) e al cavo LAN}
+\par\end{centering}
+\end{figure}
 
 
 \section{Alimentatori}
 
 Per il progetto servono due alimentatori separati, uno di potenza
 (BK precision 9104), che alimenta il controllo PWM a 48V (nel rover
-l'alimentazione sarà fornita da una batteria a 48V) e uno riservato
+l'alimentazione sarà fornita da una batteria a 48V), e uno riservato
 alla parte logica, che alimenta il drive a 24V.
 
 \include{Cap2-software}
@@ -447,17 +535,101 @@ alla parte logica, che alimenta il drive a 24V.
 
 \chapter*{Conclusioni\aggiungiAIndice{Conclusioni}}
 
-\primalettera{I}l cloud computing è .............
+\primalettera{D}opo aver confrontato le possibili opzioni, l'approccio
+migliore per il completamento del progetto sembra essere quello di
+sfruttare la libreria ros\_canopen. 
+
+Il problema principale è posto dalla mancata comunicazione del computer
+di bordo con il driver, di cui non si è riuscito a trovare la causa,
+nonostante estensivi tentativi di debug.
+
+Il contesto \textquotedbl{}ambientale\textquotedbl{} dei mesi recenti,
+segnato dall'epidemia covid-19, ha influito negativamente sullo svolgimento
+del progetto e sui risultati ottenuti imponendo condizioni di lavoro
+e di osservazione limitative (lavoro completamente indipendente, assenza
+di supporto da parte di personale più qualificato, adattatori \textquotedbl{}artigianali\textquotedbl{},
+mancanza di un laboratorio e strumentazione adeguata...).
+
+Ora, la riapertura delle sedi universitarie determina condizioni se
+non ottimali, certamente migliori, grazie alle quali è possibile attendere
+la soluzione di problemi sin qui incontrati.
+
+\begin{figure}[H]
+
+\begin{centering}
+\includegraphics[scale=0.5]{immagini/setup-hardware}\caption{Ambiente di lavoro in cui il progetto è stato svolto}
+\par\end{centering}
+\end{figure}
+
+
+\section{Debugging del connettore RJ45}
+
+Durante il lockdown e nei mesi successivi, in mancanza di un oscilloscopio
+e di un analizzatore logico, è stato impossibile accertarsi che il
+drive ricevesse effettivamente i segnali inviati. Il connettore PCAN
+dispone di un led che varia la frequenza di lampeggiamento in base
+alla presenza o meno di traffico sul bus, ma ciò non esclude che possano
+presentarsi dei problemi di interferenza o altre complicazioni nel
+trasporto dell'informazione al drive. 
+
+Per prima cosa sarebbe quindi opportuno accertare l'effettiva ricezione
+dei frame CAN da parte del drive concentrandosi sul controllo a un
+livello di astrazione più alto solo successivamente.
+
+L'adattatore PCAN smette di funzionare dopo un determinato lasso di
+tempo: è da capire se ciò sia dovuto ad una incompatibilità con il
+sistema operativo o se il prodotto utilizzato sia difettoso. La seconda
+ipotesi può essere verificata utilizzando semplicemente un adattatore
+PCAN differente; per la prima invece risulta più difficile da accertare.
+
+\section{Utilizzare ros\_canopen}
+
+La documentazione è abbastanza completa, anche se ridotta, e nel caso
+più disperato sarebbe sempre possibile contattare il mantainer per
+chiarimenti sul codice sorgente.
+
+La sintassi dei messaggi è definita nel codice sorgente di /can\_msgs. 
+
+Configurando i parametri del drive su /canopen\_chain\_node e /canopen\_motor\_node
+e collegando correttamente il bus dovrebbe essere possibile controllare
+i singoli nodi attraverso un messaggio del tipo joint\_state, o in
+alternativa un interfaccia /ros\_control\cite{ROS2020}.
+
+\section{Utilizzare Kacanopen}
+
+Kacanopen è forse la libreria più facile da utilizzare; il suo unico
+problema è l'impossibilità di utilizzarla in sinergia con l'adattatore
+PEAK. Una soluzione possibile sarebbe quella di sostituire l'adattatore
+PEAK con un IXXAT usb-to-CAN FD\cite{IXXAT}, che tra i vantaggi ha
+anche quello di disporre di un attacco RJ45 automotive, senza quindi
+necessità di adattatori addizionali. 
+
+\section{If everything else fails...}
+
+Il drive Micro Digital One può essere impostato per il controllo di
+velocità analogico attraverso un segnale +-10V, con una board arduino
+(facilmente controllabile con ROS) e con un circuito di pull-up si
+potrebbe creare un prototipo funzionante, anche se molto meno affidabile
+e preciso, con poche righe di codice. 
 
 %add to index with the right hyperlink
 \cleardoublepage \phantomsection \addcontentsline{toc}{chapter}{Bibliografia}\bibliographystyle{alpha}
-\phantomsection\addcontentsline{toc}{chapter}{\bibname}\bibliography{bibliografia}
+\bibliography{bibliografia}
 
 
 \chapter*{Ringraziamenti}
 
-Grazie a Andrea che ha pubblicato il modello, anche se il grosso del
-lavoro era già fatto da Filippo Zangheri!
+Grazie al professor Andrea Tilli per avermi fatto da relatore nonostante
+il poco preavviso, ai ragazzi di AlmaX, in particolare a Giosuè, per
+avermi introdotto ad un progetto interessante e pieno di sfide.
+
+Grazie ad AlmaAutomotive per aver fornito l'hardware ed essere poi
+sparita, a Siboni per i motori, i drives e il software DriveWatcher.
+
+Alla mia famiglia ed ai miei amici per il supporto continuativo nei
+momenti più frustranti, in particolare ad Adileo Barone, per le delucidazioni
+riguardanti il codice non documentato di ros\_canopen e, insieme ad
+Annarita Angelini, per la revisione della bozza di questo testo. 
 
 \end{mainmatter}
 \end{document}

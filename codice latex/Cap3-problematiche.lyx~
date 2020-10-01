@@ -89,14 +89,14 @@ primalettera{P}
 \end_inset
 
 er permettere al computer di bordo di inviare comandi al drive e ricevere
- un feedback, è necessario trovare un modo di codificare i messaggi ROS
+ un feedback, è necessario trovare un modo per codificare i messaggi ROS
  in CANframes.
 \end_layout
 
 \begin_layout Standard
 Benchè la comunicazione non sia ancora possibile, in questo capitolo si
- elencheranno i passaggi necessari ad eseguire il setup del drive, dell'ambiente
- ROS, delle librerie e strumenti aggiuntivi necessari.
+ elencheranno i passaggi necessari per eseguire il setup del drive, dell'ambient
+e ROS, delle librerie e degli strumenti aggiuntivi necessari.
  
 \end_layout
 
@@ -106,30 +106,31 @@ Setup drive
 
 \begin_layout Standard
 I parametri statici che definiscono il funzionamento del drive devono essere
- programmati attraverso una connessione seriale rs422, possibile attraverso
- il convertitore moxa.
+ programmati attraverso una connessione seriale rs422 possibile attraverso
+ il convertitore MOXA.
 \end_layout
 
 \begin_layout Standard
 Per eseguire il setup del drive è stato necessario utilizzare Drive Watcher,
- un software proprietario fornito dal produttore dei motori, questa suite
- sfortunatamente è compatibile solo con windows xp e necessita si un port
- non disponibile in una virtual machine il che rende impossibile utilizzarla
- senza avere il sistema operativo installato.
+ un software proprietario fornito dal produttore dei motori.
+ Questa suite sfortunatamente è compatibile solo con windows xp e necessita
+ si un port non disponibile in una virtual machine, il che rende impossibile
+ utilizzarla senza avere il sistema operativo installato.
  È stato quindi necessario utilizzare una vecchio computer esclusivamente
  per programmare i parametri del drive.
  
 \end_layout
 
 \begin_layout Subsubsection
-Abilitare Moxa
+Abilitare MOXA
 \end_layout
 
 \begin_layout Standard
-Per abilitare il convertitore moxa è necessario per prima cosa installare
- il driver da CD o file .zip della Moxa, il programma è presente all’interno
- della cartella riferita al convertitore Moxa che si possiede.
- Bisogna entrare nella cartella Software, e installare file .exe.
+Per abilitare il convertitore MOXA è necessario per prima cosa installare
+ il drivers da CD o file .zip della MOXA.
+ Il programma è presente all’interno della cartella riferita al convertitore
+ MOXA che si possiede.
+ Bisogna entrare nella cartella software e installare file .exe.
  
 \end_layout
 
@@ -162,7 +163,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Installazione moxa, parte 1
+Installazione MOXA, parte 1
 \end_layout
 
 \end_inset
@@ -184,7 +185,7 @@ Installazione moxa, parte 1
 \align left
 Da Schede Seriali Multiport cliccare col tasto destro su Uport 1130I e aprire
  Proprietà; in Ports Configuration aprire Port Setting della COM in uso
- dalla Moxa e impostare : Fast Flush su Enable e Interface su RS-422.
+ dalla MOXA e impostare : Fast Flush su Enable e Interface su RS-422.
 \begin_inset Float figure
 placement H
 wide false
@@ -207,7 +208,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Installazione moxa, parte2
+Installazione MOXA, parte2
 \end_layout
 
 \end_inset
@@ -235,8 +236,8 @@ Per installare il software basta semplicemente estrarre e aprire il file
 \end_layout
 
 \begin_layout Standard
-Prima di modificare i parametri bisogna accertarsi che la moxa sia connessa
- al driver e che la parte logica del driver sia alimentata a 24V, con l'uscita
+Prima di modificare i parametri bisogna accertarsi che la MOXA sia connessa
+ al drive e che la parte logica del drive sia alimentata a 24V, con l'uscita
  negativa dell'alimentatore messa a terra.
  
 \end_layout
@@ -246,7 +247,7 @@ Si esegue un settaggio della comunicazione attraverso la modalità "Communicatio
  Settings", impostando la ComPort designata in precedenza e cercando il
  nodo attivo attraverso il "search node tool".
  L'ultimo tool menzionato eseguirà uno sweep completo di tutti i nodi disponibil
-i, indicando quelli attivi con un colore differente.
+i indicando quelli attivi in un colore differente.
  
 \end_layout
 
@@ -297,8 +298,8 @@ Programmazione dei parametri
 \end_layout
 
 \begin_layout Standard
-I parametri si possono visualizzare nella sezione "Parameters configuration",
- ogni parametro dispone di una descrizione a lato, quindi in questo documento
+I parametri si possono visualizzare nella sezione "Parameters configuration";
+ ogni parametro dispone di una descrizione a lato, pertanto in questo documento
  non si elencheranno tutti, ma solo i più importanti ai fini del progetto.
  Per farsi un'idea più dettagliata si possono consultare il manuale Siboni
  "Istruzioni Drive Watcher" 
@@ -356,7 +357,7 @@ lo strumento Parameters Configuration
 
 \end_inset
 
-Fare particolare attenzione ai parametri: 
+Fare particolare attenzione ai seguenti parametri: 
 \end_layout
 
 \begin_layout Description
@@ -382,18 +383,18 @@ Setup ROS
 \begin_layout Standard
 L'installazione di ROS varia in base alle release.
  In questo progetto è stata utilizzata Melodic Morenia, ma in base alla
- distro di linux installata sul computer di bordo potrebbe essere necessario
+ distro di Linux installata sul computer di bordo potrebbe essere necessario
  installare una release differente.
  Ritenendo inutile descrivere il processo di installazione di una singola
- versione quando è disponibile online ampia documentazione a riguardo, si
- include qui il link al sito ufficiale di ROS, dove sono indicati tutti
- gli step necessari per le varie piattaforme: 
+ versione dal momento che è disponibile online ampia documentazione a riguardo,
+ si rimanda al sito ufficiale di ROS, ove sono indicati tutti gli step necessari
+ per le varie piattaforme: 
 \begin_inset Flex URL
 status open
 
 \begin_layout Plain Layout
 
-https://wiki.ros.org/ROS/Installation
+https://wiki.ROS.org/ROS/Installation
 \end_layout
 
 \end_inset
@@ -453,7 +454,7 @@ $ source devel/setup.bash
 
 \begin_layout Plain Layout
 
-$ echo $ROS_PACKAGE_PATH /home/youruser/catkin_ws/src:/opt/ros/
+$ echo $ROS_PACKAGE_PATH /home/youruser/catkin_ws/src:/opt/ROS/
 \end_layout
 
 \begin_layout Plain Layout
@@ -468,7 +469,7 @@ kinetic/share
 
 \begin_layout Standard
 Questo comando, insieme a catkin_make, andrà ripetuto per sicurezza ad ogni
- utilizzo del workspace e soprattuto dopo l'installazione di nuovi pacchetti.
+ utilizzo del workspace e, soprattuto, dopo l'installazione di nuovi pacchetti.
  
 \end_layout
 
@@ -477,21 +478,21 @@ Setup PCAN
 \end_layout
 
 \begin_layout Standard
-Benchè dei driver per adattatore PCAN siano installati di default nel kernel
- linux, per cui i canali CAN sono gestiti come dispositivi netdev, per utilizzar
-e il software di visualizzazione pcan_view e l'API pcan_basic è necessario
- installare i driver proprietari.
+Benchè dei drivers per adattatore PCAN siano installati di default nel kernel
+ Linux, sicchè i canali CAN sono gestiti come dispositivi netdev, per utilizzare
+ il software di visualizzazione pcan_view e l'API pcan_basic è necessario
+ installare i drivers proprietari.
  
 \end_layout
 
 \begin_layout Standard
-I driver sono disponibili sul sito della PEAK system all'indirizzo 
+I drivers sono disponibili sul sito della PEAK system all'indirizzo 
 \begin_inset Flex URL
 status open
 
 \begin_layout Plain Layout
 
-https://www.peak-system.com/fileadmin/media/linux/index.htm
+https://www.peak-system.com/fileadmin/media/Linux/index.htm
 \end_layout
 
 \end_inset
@@ -500,7 +501,7 @@ https://www.peak-system.com/fileadmin/media/linux/index.htm
 \end_layout
 
 \begin_layout Standard
-Per installarli basta decomprimere il file, aprire la cartella su un terminale
+Per installarli basta decomprimere il file e aprire la cartella su un terminale
  con i seguenti comandi: 
 \end_layout
 
@@ -525,7 +526,7 @@ $ sudo make install
 \end_layout
 
 \begin_layout Standard
-Sullo stesso terminale, per attivare i driver, si utilizza: 
+Sullo stesso terminale, per attivare i drivers, si utilizza: 
 \end_layout
 
 \begin_layout Standard
@@ -544,8 +545,8 @@ $ sudo modprobe peak_usb
 \end_layout
 
 \begin_layout Standard
-Modprobe è un comando di linux che aggiunge un modulo al kernel per estendere
- le sue funzionalità, in questo caso stiamo aggiungendo il modulo can0,
+Modprobe è un comando di Linux che aggiunge un modulo al kernel per estendere
+ le sue funzionalità; in questo caso stiamo aggiungendo il modulo can0,
  necessario per utilizzare una linea seriale CAN e per il funzionamento
  dell'adattatore.
  Controlliamo che can0 sia attivo:
@@ -590,9 +591,10 @@ $ sudo ip link set up can0 type can bitrate 250000
 
 \begin_layout Standard
 Se vogliamo una baud a 500k basta modificare il bitrate.
- Ora il led dell'adattatore dovrebbe lampeggiare lentamente, indicando una
+ Ora il led dell'adattatore dovrebbe lampeggiare lentamente indicando una
  connessione attiva.
- Per disabilitare l'adattatore in caso di malfunzionamenti:
+ Per disabilitare l'adattatore in caso di malfunzionamenti, si procede con
+ il comando:
 \begin_inset listings
 inline false
 status open
@@ -612,7 +614,7 @@ Can-utils
 \end_layout
 
 \begin_layout Standard
-Il primo tentativo di invio di frame CANopen è stato fatto utilizzando can-utils.
+Il primo tentativo di invio di frame CANopen ha utilizzato can-utils.
  
 \end_layout
 
@@ -643,7 +645,7 @@ $ sudo apt-get install can-utils
 \end_layout
 
 \begin_layout Standard
-Per vedere che messaggi passano attraverso la linea can0:
+Per vedere che messaggi passano attraverso la linea can0, il comando è:
 \end_layout
 
 \begin_layout Standard
@@ -662,7 +664,7 @@ $ candump can0
 \end_layout
 
 \begin_layout Standard
-Per inviare un frame CAN: 
+Per inviare un frame CAN, il comando è: 
 \end_layout
 
 \begin_layout Standard
@@ -698,9 +700,9 @@ Cansend permette solo di inviare CAN frames codificati in binario o esadecimale,
  per inviare un frame CANopen è necessario specificare ogni volta il tipo
  di messaggio inviato (NMT, SDO, PDO) e leggere la risposta al livello più
  basso.
- I frame in uscita vengono registrati da candump, ma il drive non risponde,
+ I frames in uscita vengono registrati da candump, ma il drive non risponde,
  anche a causa dell'assenza di un segnale heartbeat da parte del computer,
- che potrebbe essere interpretata dal drive come un errore di comunicazione.
+ interpretabile dal drive come un errore di comunicazione.
 \end_layout
 
 \begin_layout Section
@@ -710,9 +712,9 @@ CANopenSocket
 \begin_layout Standard
 Per ovviare a questo problema è stato utilizzato CANopenSocket, che permette
  di inviare frames CANopen ad un livello di astrazione più alto, risparmiando
- tempo ed evitando errori di codifica del messaggio, oltre a generare automatica
-mente un segnale di hearbeat.
- CANopenSocket inoltre fornisce il controllo della macchina a stati tramite
+ tempo ed evitando errori di codifica del messaggio.
+ Esso permette inoltre di generare automaticamente un segnale di hearbeat.
+ CANopenSocket fornisce anche il controllo della macchina a stati tramite
  comandi NMT di tipo verbose.
 \end_layout
 
@@ -803,13 +805,14 @@ can0 specifica l'interfaccia utilizzata
 \end_layout
 
 \begin_layout Description
--i specifica l'indirizzo del nodo che vogliamo creare, se non viene incluso
- l'indirizzo viene preso dall'object dictionary incluso nella cartella /objDict,
- può essere qualsiasi indirizzo a parte 1, che è riservato al drive
+-i specifica l'indirizzo del nodo che si vuole creare; nel caso in cui non
+ venga incluso l'indirizzo, esso viene preso dall'object dictionary contenuto
+ nella cartella /objDict.
+ Può essere qualsiasi indirizzo tranne 1, che è riservato al drive
 \end_layout
 
 \begin_layout Description
--c abilita l'interfaccia di comando per funzionalità master, impostandolo
+-c abilita l'interfaccia di comando per funzionalità master; impostandolo
  come stringa vuota (" ") viene usato il socket di default, che ci permette
  di inviare messaggi agli altri nodi attraverso canopencomm
 \end_layout
@@ -849,7 +852,7 @@ $ ./canopencomm --help
 \end_layout
 
 \begin_layout Standard
-Con le opzioni disponibili ora possiamo inviare frame CANopen attraverso
+Con le opzioni disponibili ora è possibile inviare frame CANopen attraverso
  l'interfaccia can0.
  
 \end_layout
@@ -882,9 +885,11 @@ Sorgono però una serie di complicazioni: innanzi tutto CANopenSocket permette
  che contiene ControlWord e VelocityTarget, il drive non risponde.
  Inoltre se si esegue un candump della linea seriale, si vede che la comunicazio
 ne viene interrotta dopo circa trenta secondi.
- Sono state provate diverse soluzioni, ma mentre con un'interfaccia virtuale
- (vcan0), la comunicazione funziona e non si hanno problemi di alcun genere,
- non si è trovato niente che potesse risolvere questo problema.
+ Sono state tentate diverse soluzioni, e sebbene con un'interfaccia virtuale
+ (vcan0), la comunicazione funzioni e non si riscontrino problemi di alcun
+ genere, in questo caso non si è trovato nessuna soluzione al problema,
+ che potrebbe essere causato da un adattatore difettoso, da un errore del
+ driver o da interferenze sul bus.
 \end_layout
 
 \begin_layout Section
@@ -899,20 +904,20 @@ key "KITmedical2016"
 \end_layout
 
 \begin_layout Standard
-Non riscontrando successo con CANopenSocket, si è deciso di passare ad una
- libreria ROS che permettesse di connettersi direttamente con il drive attravers
-o l'adattatore PCAN, e che contenesse al suo interno tutti gli strumenti
- necessari al controllo di un drive.
+Il fatto che non si sia avuto successo con CANopenSocket, ha suggerito di
+ passare ad una libreria ROS che permettesse di connettersi direttamente
+ con il drive attraverso l'adattatore PCAN e che contenesse al suo interno
+ tutti gli strumenti necessari al controllo di un drive.
  
 \end_layout
 
 \begin_layout Standard
-Kacanopen è sembrato un'ottima opzione, in quanto fornisce al suo interno
- diversi strumenti utili: drivers per la maggior parte degli adattatori
- usb to CAN, un master CANopen integrato, protocolli SDO, PDO ed NMT facilmente
- utilizzabili e un bridge ROS, che rende disponibili pubblicare i nodi CANopen
- come nodi ROS in modo da poterli controllare semplicemente attraverso messaggi
- del tipo joint_state.
+Kacanopen è sembrato un'ottima opzione, in quanto fornisce diversi strumenti
+ utili: drivers per la maggior parte degli adattatori usb to CAN, un master
+ CANopen integrato, protocolli SDO, PDO ed NMT facilmente utilizzabili e
+ un bridge ROS, che rende possibile pubblicare i nodi CANopen come nodi
+ ROS in modo da poterli controllare semplicemente attraverso messaggi del
+ tipo joint_state.
 \end_layout
 
 \begin_layout Standard
@@ -956,17 +961,17 @@ $ catkin_make -DDRIVER=socket
 \end_layout
 
 \begin_layout Standard
-Studiando la libreria Kacanopen, si sono incontrate due problematiche che
- non la rendono adatta al progetto.
- In primo luogo la libreria Kacanopen non è mantenuta, è stata progettata
- per lavorare con ROS jade, una versione di ROS ormai deprecata e mai aggiornata.
+Lo studio della la libreria Kacanopen, ha evidenziato due problematiche
+ che non la rendono adatta al progetto.
+ In primo luogo la libreria Kacanopen non è aggiornata, è stata progettata
+ per lavorare con ROS jade, che è una versione di ROS ormai deprecata.
  
 \end_layout
 
 \begin_layout Standard
-Nonostante questo la libreria potrebbe comunque funzionare, anche se in
+Nonostante questo, la libreria potrebbe comunque funzionare, sebbene in
  maniera leggermente limitata.
- Infatti la modularità di ros permette a nodi costruiti con una versione
+ Infatti la modularità di ROS permette a nodi costruiti con una versione
  precedente di funzionare lo stesso, a patto che la sintasssi dei messaggi
  sia compatibile con le versioni più recenti, e che si possa eseguire la
  build della libreria a partire dal codice sorgente attraverso catkin_make.
@@ -974,17 +979,17 @@ Nonostante questo la libreria potrebbe comunque funzionare, anche se in
 \end_layout
 
 \begin_layout Standard
-Kacanopen funziona anche indipendentemente da ROS, basta utilizzare cmake
- per eseguire la build.
+Kacanopen funziona anche indipendentemente da ROS, utilizzando cmake per
+ eseguire la build.
  
 \end_layout
 
 \begin_layout Standard
-Il problema che rende impossibile utilizzare Kacanopen senza una sostanziale
- riscrittura del codice sono i drivers di cui ha bisogno per funzionare
- con un adattatore PCAN: il codice è infatti progettato per funzionare con
- una versione precedente dei drivers.
- È possibile installare i driver compatibili con: 
+A rendere impossibile l'utilizzo di Kacanopen (almeno con il connettore
+ PCAN) senza una sostanziale riscrittura del codice sono i drivers di cui
+ ha bisogno per funzionare con un adattatore PCAN: il codice è infatti progettat
+o per funzionare con una versione precedente dei drivers.
+ È possibile installare i drivers compatibili con: 
 \end_layout
 
 \begin_layout Standard
@@ -994,7 +999,7 @@ status open
 
 \begin_layout Plain Layout
 
-$ wget http://www.peak-system.com/fileadmin/media/linux/files/
+$ wget http://www.peak-system.com/fileadmin/media/Linux/files/
 \end_layout
 
 \begin_layout Plain Layout
@@ -1040,8 +1045,8 @@ Ma una volta scaricati, non sembra siano compatibili con la versione del
 \end_layout
 
 \begin_layout Standard
-È stato fatto un tentativo di utilizzare Kacanopen con driver aggiornati,
- aggiungendo i driver peak_usb all'interno di /kacanopen/src/drivers_lgpl
+È stato fatto un tentativo di utilizzare Kacanopen con drivers aggiornati,
+ aggiungendo i drivers peak_usb all'interno di /kacanopen/src/drivers_lgpl
  e utilizzando poi:
 \end_layout
 
@@ -1065,7 +1070,7 @@ Ma non sono stati ottenuti i risultati sperati.
 \end_layout
 
 \begin_layout Section
-ros_canopen 
+ROS_canopen 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "ros_canopen2015"
@@ -1076,7 +1081,7 @@ key "ros_canopen2015"
 \end_layout
 
 \begin_layout Standard
-Un'altra opzione che sembra promettente è la libreria ros_canopen.
+Un'altra opzione che sembra promettente è la libreria ROS_canopen.
  Parte del progetto ros-industrial
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -1085,7 +1090,7 @@ key "rosindustrial2020"
 \end_inset
 
 , che ha l'obiettivo di estendere le capacità di ROS ad hardware ed applicazioni
- industriali, ros_canopen è una libreria che fornisce il supporto di dispositivi
+ industriali, ROS_canopen è una libreria che fornisce il supporto di dispositivi
  CANopen all'interno di ROS.
  
 \end_layout
@@ -1103,7 +1108,7 @@ https://github.com/ipa-mdl
 
 \end_inset
 
-) e funziona con i drivers can integrati nel kernel linux.
+) e funziona con i drivers can integrati nel kernel Linux.
  
 \end_layout
 
@@ -1119,7 +1124,7 @@ status open
 
 \begin_layout Plain Layout
 
-$ git clone https://github.com/ros-industrial/ros_canopen
+$ git clone https://github.com/ros-industrial/ROS_canopen
 \end_layout
 
 \begin_layout Plain Layout
@@ -1153,7 +1158,7 @@ canopen_chain_node controlla un bus CANopen con uno o più nodi, che sono
 \end_layout
 
 \begin_layout Description
-canopen_motor_node fornisce un'interfaccia ros_control a motori conformi
+canopen_motor_node fornisce un'interfaccia ROS_control a motori conformi
  allo standard CiA 402
 \end_layout
 
@@ -1163,7 +1168,7 @@ socketcan_bridge espone i frames CAN ai messaggi ROS e viceversa
 
 \begin_layout Description
 socketcan_interface fornisce un'interfaccia CAN generica e un'implementazione
- dei driver basata su socketcan
+ dei drivers basata su socketcan
 \end_layout
 
 \begin_layout Description
@@ -1197,7 +1202,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Schema di funzionamento di ros_canopen
+Schema di funzionamento di ROS_canopen
 \end_layout
 
 \end_inset
@@ -1219,7 +1224,7 @@ File .edf .urdf
 \end_layout
 
 \begin_layout Standard
-Per funzionare, sia Kacanopen che ros_canopen hanno bisogno di due file:
+Per funzionare, sia Kacanopen che ROS_canopen hanno bisogno di due file:
  EDS (Electronic Data Sheet) e URDF (Universal Robotic Description Format)
  
 \end_layout
@@ -1574,10 +1579,6 @@ status open
 
 \end_inset
 
-
-\end_layout
-
-\begin_layout Standard
 
 \end_layout
 
