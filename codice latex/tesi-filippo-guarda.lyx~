@@ -315,10 +315,9 @@ primalettera{L}
 
 a ERC, European Rover Challenge, è una competizione a livello europeo, organizza
 ta dal 2014 in Polonia.
- Anche l'università di Bologna, in collaborazione con la sede di Forlì,
- partecipa a questa competizione con il gruppo AlmaX, che ha il compito
- di sviluppare un rover che rispetti le specifiche fornite nel regolamento
- 
+ Anche l'Università di Bologna, sedi di Bologna e Forlì, partecipa a questa
+ competizione con il gruppo AlmaX, che ha il compito di sviluppare un rover
+ che rispetti le specifiche fornite nel regolamento 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Bogusz2020"
@@ -349,7 +348,7 @@ La capacità del rover di interagire con un pannello di controllo fisico
 
 \begin_layout Standard
 Inserito nel contesto più ampio dello sviluppo del rover, l'argomento di
- questa tesi è il benchmark della parte relativa al motion control.
+ questa tesi è l'analisi della parte relativa al motion control.
 \end_layout
 
 \begin_layout Standard
@@ -376,7 +375,7 @@ https://github.com/FilippoGuarda/MotionControlAlmax
 \end_layout
 
 \begin_layout Section
-Pipeline
+Obiettivo e architettura di riferimento
 \end_layout
 
 \begin_layout Standard
@@ -416,7 +415,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Pipeline del Motion Control
+Architettura del Motion Control del Rover
 \end_layout
 
 \end_inset
@@ -455,7 +454,7 @@ Capitolo 2
 \begin_layout Standard
 Il secondo capitolo è dedicato ad una introduzione a ROS e CANopen: il primo,
  un middleware specifico per la robotica, il secondo, uno standard di comunicazi
-one necessario a controllare il drive.
+one necessario a gestire il drive.
 \end_layout
 
 \begin_layout Standard
@@ -473,7 +472,7 @@ La seconda sezione è dedicata a al bus CAN, attraverso il quale il protocollo
 \end_layout
 
 \begin_layout Section
-Software
+Capitolo 3
 \end_layout
 
 \begin_layout Standard
@@ -505,8 +504,8 @@ primalettera{O}
 
 \end_inset
 
-bbiettivo del progetto è il controllo di un motore BLDC; nel caso in esame,
- i motori forniti sono Siboni S60 ed S40.
+biettivo del progetto è il controllo di un motore BLDC usato per la trazione
+ del Rover; nel caso in esame, i motori forniti sono Siboni S60 ed S40.
  Questi motori hanno le seguenti specifiche, che ci saranno utili più tardi
  per inserirle nei parametri del drive
 \begin_inset CommandInset citation
@@ -965,7 +964,7 @@ Convertitore MOXA e adattatore PCAN
 
 \begin_layout Standard
 Per connettere il drive ai due computer utilizzati, uno per la programmazione
- dello stesso e uno per il controllo, si usano due connettori da usb a seriale:
+ dello stesso e uno per il comando, si usano due connettori da usb a seriale:
 \end_layout
 
 \begin_layout Subsection
@@ -1295,14 +1294,15 @@ primalettera{D}
 \end_inset
 
 opo aver confrontato le possibili opzioni, l'approccio migliore per il completam
-ento del progetto sembra essere quello di sfruttare la libreria ros_canopen.
+ento del progetto sembra essere quello di sfruttare le librerie ros_canopen
+ o kacanopen.
  
 \end_layout
 
 \begin_layout Standard
 Il problema principale è posto dalla mancata comunicazione del computer
- di bordo con il driver, di cui non si è riuscito a trovare la causa, nonostante
- estensivi tentativi di debug.
+ di bordo con il drive, di cui non si è riuscito a trovare la causa, nonostante
+ estensivi tentativi di debug (candump, CANopenSocket, PCANview).
 \end_layout
 
 \begin_layout Standard
@@ -1318,6 +1318,10 @@ one adeguata...).
 Ora, la riapertura delle sedi universitarie determina condizioni se non
  ottimali, certamente migliori, grazie alle quali è possibile attendere
  la soluzione di problemi sin qui incontrati.
+\begin_inset Newpage newpage
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -1343,7 +1347,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Ambiente di lavoro in cui il progetto è stato portato avanti
+Ambiente di lavoro in cui il progetto è stato svolto
 \end_layout
 
 \end_inset
@@ -1358,100 +1362,6 @@ Ambiente di lavoro in cui il progetto è stato portato avanti
 \end_inset
 
 
-\end_layout
-
-\begin_layout Section
-Debugging del connettore RJ45
-\end_layout
-
-\begin_layout Standard
-Durante il lockdown e nei mesi successivi, in mancanza di un oscilloscopio
- e di un analizzatore logico, è stato impossibile accertarsi che il drive
- ricevesse effettivamente i segnali inviati.
- Benchè il connettore PCAN disponga di un led che varia la frequenza di
- lampeggiamento in base alla presenza o meno di traffico sul bus, potrebbero
- esserci dei problemi di interferenza o altre complicazioni nel trasporto
- dell'informazione al drive.
- 
-\end_layout
-
-\begin_layout Standard
-Per prima cosa sarebbe quindi opportuno accertarsi dell'effettiva ricezione
- dei frame CAN da parte del drive, concentrandosi sul controllo a livello
- di astrazione più alto solo successivamente.
-\end_layout
-
-\begin_layout Standard
-Inoltre l'adattatore PCAN smette di funzionare dopo un certo lasso di tempo,
- è da capire se il problema sia dovuto ad una incompatibilità con il sistema
- operativo o se il prodotto sia difettoso, la seconda ipotesi si può accantonare
- semplicemente utilizzando un adattatore PCAN differente, per la prima invece
- il problema sarebbe di più difficile soluzione.
- 
-\end_layout
-
-\begin_layout Section
-Utilizzare ros_canopen
-\end_layout
-
-\begin_layout Standard
-Benchè non sia stato possibile terminare il lavoro in tempo utile, un'opzione
- è lavorare con ros_canopen.
- La documentazione è abbastanza completa, anche se ridotta, e nel caso più
- disperato sarebbe sempre possibile contattare il mantainer per chiarimenti
- sul codice sorgente.
-\end_layout
-
-\begin_layout Standard
-La sintassi dei messaggi è definita nel codice sorgente di /can_msgs.
- 
-\end_layout
-
-\begin_layout Standard
-Configurando i parametri del drive su /canopen_chain_node e /canopen_motor_node
- e collegando correttamente il bus dovrebbe essere possibile controllare
- i singoli nodi attraverso un messaggio del tipo joint_state, o in alternativa
- un interfaccia /ros_control
-\begin_inset CommandInset citation
-LatexCommand cite
-key "ROS2020"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Section
-Utilizzare Kacanopen
-\end_layout
-
-\begin_layout Standard
-Kacanopen è forse la libreria più facile da utilizzare, il suo unico problema
- è l'impossibilità di utilizzarla in sinergia con l'adattatore PEAK.
- Una soluzione possibile sarebbe di sostituire l'adattatore PEAK con un
- IXXAT usb-to-CAN FD
-\begin_inset CommandInset citation
-LatexCommand cite
-key "IXXAT"
-
-\end_inset
-
-, che tra i vantaggi ha anche quello di disporre di un attacco RJ45 automotive,
- senza quindi bisogno adattatori addizionali.
- 
-\end_layout
-
-\begin_layout Section
-If everything else fails...
-\end_layout
-
-\begin_layout Standard
-Il drive Micro Digital One può essere impostato per il controllo di velocità
- analogico attraverso un segnale +-10V, con una board arduino (facilmente
- controllabile con ROS) e con un circuito di pull-up si potrebbe creare
- un prototipo funzionante, anche se molto meno affidabile e preciso, con
- poche righe di codice.
- 
 \end_layout
 
 \begin_layout Standard
@@ -1503,10 +1413,10 @@ Grazie ad AlmaAutomotive per aver fornito l'hardware ed essere poi sparita,
 \end_layout
 
 \begin_layout Standard
-Alla mia famiglia ed ai miei amici per il supporto continuativo nei momenti
- più frustranti, in particolare ad Adileo Barone, per le delucidazioni riguardan
-ti il codice non documentato di ros_canopen e, insieme ad Annarita Angelini,
- per la revisione della bozza di questo testo.
+Alla mia famiglia ed ai miei amici, per il supporto continuativo anche nei
+ momenti più frustranti, in particolare ad Adileo Barone, per le delucidazioni
+ riguardanti il codice non documentato di ros_canopen e, insieme ad Annarita
+ Angelini, per la revisione della bozza di questo testo.
  
 \end_layout
 

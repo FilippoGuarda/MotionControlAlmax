@@ -893,6 +893,198 @@ ne viene interrotta dopo circa trenta secondi.
 \end_layout
 
 \begin_layout Section
+PCAN-view
+\end_layout
+
+\begin_layout Standard
+La PEAK instruments offre anche una suite proprietaria con funzionalità
+ simili a can-utils, anche questa opzione è stata provata per eliminare
+ la possibilità di un problema legato al software precedentemente utilizzato.
+\end_layout
+
+\begin_layout Standard
+L'installazione su Linux si esegue scaricando e installando il file peak-system.l
+ist attraverso il comando: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ wget -q http://www.peak-system.com/debian/dists/
+\end_layout
+
+\begin_layout Plain Layout
+
+`lsb_release -cs`/peak-system.list -O- 
+\end_layout
+
+\begin_layout Plain Layout
+
+$ sudo tee /etc/apt/sources.list.d/peak-system.list 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Successivamente installiamo pcan-view con i seguenti comandi: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ wget -q http://www.peak-system.com/debian/
+\end_layout
+
+\begin_layout Plain Layout
+
+peak-system-public-key.asc -O-
+\end_layout
+
+\begin_layout Plain Layout
+
+$ sudo apt-key add - 
+\end_layout
+
+\begin_layout Plain Layout
+
+$ sudo apt-get update 
+\end_layout
+
+\begin_layout Plain Layout
+
+$ sudo apt-get install pcanview-ncurses
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Per lanciare il programma da terminale si usa il comando:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ sudo modprobe peak_usb
+\end_layout
+
+\begin_layout Plain Layout
+
+$ pcanview
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Che dà accesso ad un applicazione da terminale, la quale all'avvio chiede
+ di settare i parametri del bus CAN in modo simile a quanto fatto precedentement
+e.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename immagini/pcanview.png
+	scale 20
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Applicazione pcanview all'avvio, è possibile impostare il bitrate e altre
+ impostazioni
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Dopo aver settato il bitrate, se colleghiamo il cavo ethernet all'attacco
+ rj45 del drive, riceviamo una serie di messaggi di errore in trasmissione,
+ e un messaggio in ricezione che mette la connessione in pausa.
+ Dopo questo scambio il drive non risponde a qualsiasi tipo di frame inviamo
+ attraverso il tasto Transmit.
+ Questo comportamento si ripete ad ogni tentativo.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename immagini/pcanviewerror.png
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Errori di trasmissione e messaggio in ricezione al primo collegamento con
+ il drive
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
 Kacanopen
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -1580,6 +1772,168 @@ status open
 \end_inset
 
 
+\end_layout
+
+\begin_layout Section
+Debugging del connettore RJ45
+\end_layout
+
+\begin_layout Standard
+Durante il lockdown e nei mesi successivi, in mancanza di un oscilloscopio
+ e di un analizzatore logico, è stato impossibile accertarsi che il drive
+ ricevesse effettivamente i segnali inviati.
+ Il connettore PCAN dispone di un led che varia la frequenza di lampeggiamento
+ in base alla presenza o meno di traffico sul bus, ma ciò non esclude che
+ possano presentarsi dei problemi di interferenza o altre complicazioni
+ nel trasporto dell'informazione al drive.
+ 
+\end_layout
+
+\begin_layout Standard
+Per prima cosa sarebbe quindi opportuno accertare l'effettiva ricezione
+ dei frame CAN da parte del drive concentrandosi sul controllo a un livello
+ di astrazione più alto solo successivamente.
+\end_layout
+
+\begin_layout Standard
+L'adattatore PCAN smette di funzionare dopo un determinato lasso di tempo:
+ è da capire se ciò sia dovuto ad una incompatibilità con il sistema operativo
+ o se il prodotto utilizzato sia difettoso.
+ La seconda ipotesi può essere verificata utilizzando semplicemente un adattator
+e PCAN differente; la prima invece risulta più difficile da accertare.
+\end_layout
+
+\begin_layout Section
+Utilizzare ros_canopen
+\end_layout
+
+\begin_layout Standard
+La documentazione è abbastanza completa, anche se ridotta, e nel caso più
+ disperato sarebbe sempre possibile contattare il mantainer per chiarimenti
+ sul codice sorgente.
+\end_layout
+
+\begin_layout Standard
+La sintassi dei messaggi è definita nel codice sorgente di /can_msgs, per
+ la comunicazione si utilizza il nodo socketcan_bridge_node.
+ 
+\end_layout
+
+\begin_layout Standard
+Questo nodo è iscritto al topic sent_messages, i messaggi che riceve su
+ quel topic vengono tradotti in CANframes e inviati al drive; inoltre il
+ nodo pubblica su received_messages i CANframes ricevuti dal drive.
+ 
+\end_layout
+
+\begin_layout Standard
+I messaggi sono del tipo: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+Header header
+\end_layout
+
+\begin_layout Plain Layout
+
+uint32 id
+\end_layout
+
+\begin_layout Plain Layout
+
+bool is_rtr
+\end_layout
+
+\begin_layout Plain Layout
+
+bool is_extended
+\end_layout
+
+\begin_layout Plain Layout
+
+bool is_error
+\end_layout
+
+\begin_layout Plain Layout
+
+uint8 dlc
+\end_layout
+
+\begin_layout Plain Layout
+
+uint8[8] data
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Configurando i parametri del drive su /canopen_chain_node e /canopen_motor_node
+ (il file edf per CiA 402 è incluso nella cartella github del progetto,
+ il file urdf deve essere sviluppato conoscendo le geometrie del rover,
+ le quali non sono al momento disponibili) e collegando correttamente il
+ bus dovrebbe essere possibile controllare i singoli nodi attraverso un
+ messaggio del tipo joint_state, o in alternativa un interfaccia /ros_control
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ROS2020"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+Utilizzare Kacanopen
+\end_layout
+
+\begin_layout Standard
+Kacanopen è forse la libreria più facile da utilizzare data la documentazione
+ completa disponibile al link: 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://kitmedical.github.io/kacanopen/
+\end_layout
+
+\end_inset
+
+; il suo unico problema è l'impossibilità di utilizzarla in sinergia con
+ l'adattatore PEAK.
+ Una soluzione possibile sarebbe quella di sostituire l'adattatore PEAK
+ con un IXXAT usb-to-CAN FD
+\begin_inset CommandInset citation
+LatexCommand cite
+key "IXXAT"
+
+\end_inset
+
+, che tra i vantaggi ha anche quello di disporre di un attacco RJ45 automotive,
+ senza quindi necessità di adattatori addizionali.
+ 
+\end_layout
+
+\begin_layout Section
+If everything else fails...
+\end_layout
+
+\begin_layout Standard
+Il drive Micro Digital One può essere impostato per il controllo di velocità
+ analogico attraverso un segnale +-10V, con una board arduino (facilmente
+ controllabile con ROS) e con un circuito di pull-up si potrebbe creare
+ un prototipo funzionante, anche se molto meno affidabile e preciso, con
+ poche righe di codice.
+ 
 \end_layout
 
 \end_body

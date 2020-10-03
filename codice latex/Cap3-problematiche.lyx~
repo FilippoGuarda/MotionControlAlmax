@@ -893,6 +893,115 @@ ne viene interrotta dopo circa trenta secondi.
 \end_layout
 
 \begin_layout Section
+PCAN-view
+\end_layout
+
+\begin_layout Standard
+La PEAK instruments offre anche una suite proprietaria con funzionalità
+ simili a can-utils, anche questa opzione è stata provata per eliminare
+ la possibilità di un problema legato al software precedentemente utilizzato.
+\end_layout
+
+\begin_layout Standard
+L'installazione su Linux si esegue scaricando e installando il file peak-system.l
+ist attraverso il comando: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ wget -q http://www.peak-system.com/debian/dists/
+\end_layout
+
+\begin_layout Plain Layout
+
+`lsb_release -cs`/peak-system.list -O- 
+\end_layout
+
+\begin_layout Plain Layout
+
+$ sudo tee /etc/apt/sources.list.d/peak-system.list 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Successivamente installiamo pcan-view con i seguenti comandi: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ wget -q http://www.peak-system.com/debian/
+\end_layout
+
+\begin_layout Plain Layout
+
+peak-system-public-key.asc -O-
+\end_layout
+
+\begin_layout Plain Layout
+
+$ sudo apt-key add - 
+\end_layout
+
+\begin_layout Plain Layout
+
+$ sudo apt-get update 
+\end_layout
+
+\begin_layout Plain Layout
+
+$ sudo apt-get install pcanview-ncurses
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Per lanciare il programma da terminale si usa il comando:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+$ sudo modprobe peak_usb
+\end_layout
+
+\begin_layout Plain Layout
+
+$ pcanview
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Che dà accesso ad un applicazione da terminale, la quale all'avvio chiede
+ di settare i parametri del bus CAN in modo simile a quanto fatto precedentement
+e.
+\end_layout
+
+\begin_layout Section
 Kacanopen
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -989,7 +1098,7 @@ A rendere impossibile l'utilizzo di Kacanopen (almeno con il connettore
  PCAN) senza una sostanziale riscrittura del codice sono i drivers di cui
  ha bisogno per funzionare con un adattatore PCAN: il codice è infatti progettat
 o per funzionare con una versione precedente dei drivers.
- È possibile installare i drivers compatibili con: 
+ È possibile installare i drivers compatibili con il comando: 
 \end_layout
 
 \begin_layout Standard
@@ -1038,14 +1147,14 @@ key "kacanopen2016"
 \end_layout
 
 \begin_layout Standard
-Ma una volta scaricati, non sembra siano compatibili con la versione del
+Una volta scaricati, non sembrano essere compatibili con la versione del
  sistema operativo, infatti durante il processo di installazione una grossa
  porzione del codice dà errori.
  
 \end_layout
 
 \begin_layout Standard
-È stato fatto un tentativo di utilizzare Kacanopen con drivers aggiornati,
+È stato fatto il tentativo di utilizzare Kacanopen con drivers aggiornati,
  aggiungendo i drivers peak_usb all'interno di /kacanopen/src/drivers_lgpl
  e utilizzando poi:
 \end_layout
@@ -1066,11 +1175,11 @@ $ catkin_make -DDRIVER=peak_usb
 \end_layout
 
 \begin_layout Standard
-Ma non sono stati ottenuti i risultati sperati.
+ma non sono stati ottenuti i risultati sperati.
 \end_layout
 
 \begin_layout Section
-ROS_canopen 
+ros_canopen 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "ros_canopen2015"
@@ -1081,7 +1190,7 @@ key "ros_canopen2015"
 \end_layout
 
 \begin_layout Standard
-Un'altra opzione che sembra promettente è la libreria ROS_canopen.
+Un'altra opzione che sembra promettente è la libreria ros_canopen.
  Parte del progetto ros-industrial
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -1090,7 +1199,7 @@ key "rosindustrial2020"
 \end_inset
 
 , che ha l'obiettivo di estendere le capacità di ROS ad hardware ed applicazioni
- industriali, ROS_canopen è una libreria che fornisce il supporto di dispositivi
+ industriali, ros_canopen è una libreria che fornisce il supporto di dispositivi
  CANopen all'interno di ROS.
  
 \end_layout
@@ -1124,7 +1233,7 @@ status open
 
 \begin_layout Plain Layout
 
-$ git clone https://github.com/ros-industrial/ROS_canopen
+$ git clone https://github.com/ros-industrial/ros_canopen
 \end_layout
 
 \begin_layout Plain Layout
@@ -1147,13 +1256,13 @@ La libreria è composta da diversi strumenti:
 \end_layout
 
 \begin_layout Description
-canopen_master implementazione di un master secondo lo standarc CiA 301,
- con supporto di sincronizzazione infra-processo.
+canopen_master implementa un master secondo lo standarc CiA 301, con supporto
+ di sincronizzazione infra-processo.
  
 \end_layout
 
 \begin_layout Description
-canopen_chain_node controlla un bus CANopen con uno o più nodi, che sono
+canopen_chain_node controlla un bus CANopen con uno o più nodi che sono
  configurati attraverso un file EDS/DCF
 \end_layout
 
@@ -1176,7 +1285,7 @@ canopen_402 contiene l'implementazione del protocollo CiA 402 DSP
 \end_layout
 
 \begin_layout Description
-can_msgs definizione di messaggio ROS per CAN
+can_msgs definisce un messaggio ros_canopen tipo
 \end_layout
 
 \begin_layout Standard
@@ -1202,7 +1311,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Schema di funzionamento di ROS_canopen
+Schema di funzionamento di ros_canopen
 \end_layout
 
 \end_inset
@@ -1224,7 +1333,7 @@ File .edf .urdf
 \end_layout
 
 \begin_layout Standard
-Per funzionare, sia Kacanopen che ROS_canopen hanno bisogno di due file:
+Per funzionare, sia Kacanopen che ros_canopen hanno bisogno di due file:
  EDS (Electronic Data Sheet) e URDF (Universal Robotic Description Format)
  
 \end_layout
@@ -1234,9 +1343,9 @@ EDF
 \end_layout
 
 \begin_layout Standard
-L'electronic data sheet è un template fornito dall'azienda produttrice dell'obje
-ct dictionary e contiene informazioni su tutti gli oggetti dell'OD, senza
- però i valori, che vengono specificati dal progettista finale.
+L'Electronic Data Sheet è un template fornito dall'azienda produttrice dell'obje
+ct dictionary e contiene informazioni su tutti gli oggetti dell'OD, ma non
+ sin i valori, che vengono specificati dal progettista finale.
  
 \end_layout
 
@@ -1304,8 +1413,8 @@ L'Universal Robotic Description Format descrive apputo il robot nella sua
 \end_layout
 
 \begin_layout Standard
-Per creare un file URDF si abbozza prima una lista dei collegamenti e delle
- articolazioni del robot
+Per creare un file URDF si abbozza innanzitutto una lista dei collegamenti
+ e delle articolazioni del robot
 \begin_inset CommandInset citation
 LatexCommand cite
 key "urdf_file"
@@ -1428,15 +1537,15 @@ status open
 \end_layout
 
 \begin_layout Standard
-Nel file specifichiamo prima i nomi dei vari collegamenti, poi i gradi di
- "parentela", cioè a quali collegamenti si attaccano le articolazioni.
+Nel file vanno prima specificati i nomi dei vari collegamenti, poi i gradi
+ di "parentela", vale a dire a quali collegamenti si attaccano le articolazioni.
 \end_layout
 
 \begin_layout Standard
-In seguito posizioniamo nello spazio le articolazioni attraverso il tag
- "origin", specificando la distanza e l'angolo di rotazione di ognuna rispetto
- alla sua origine e infine con il tag "axis" specifichiamo come si muovono
- le articolazioni.
+In seguito vanno posizionate nello spazio le articolazioni attraverso il
+ tag "origin" specificando la distanza e l'angolo di rotazione di ognuna
+ rispetto alla sua origine; e infine con il tag "axis" viene specificato
+ il modo in cui si muovono le articolazioni.
  
 \end_layout
 
@@ -1580,6 +1689,168 @@ status open
 \end_inset
 
 
+\end_layout
+
+\begin_layout Section
+Debugging del connettore RJ45
+\end_layout
+
+\begin_layout Standard
+Durante il lockdown e nei mesi successivi, in mancanza di un oscilloscopio
+ e di un analizzatore logico, è stato impossibile accertarsi che il drive
+ ricevesse effettivamente i segnali inviati.
+ Il connettore PCAN dispone di un led che varia la frequenza di lampeggiamento
+ in base alla presenza o meno di traffico sul bus, ma ciò non esclude che
+ possano presentarsi dei problemi di interferenza o altre complicazioni
+ nel trasporto dell'informazione al drive.
+ 
+\end_layout
+
+\begin_layout Standard
+Per prima cosa sarebbe quindi opportuno accertare l'effettiva ricezione
+ dei frame CAN da parte del drive concentrandosi sul controllo a un livello
+ di astrazione più alto solo successivamente.
+\end_layout
+
+\begin_layout Standard
+L'adattatore PCAN smette di funzionare dopo un determinato lasso di tempo:
+ è da capire se ciò sia dovuto ad una incompatibilità con il sistema operativo
+ o se il prodotto utilizzato sia difettoso.
+ La seconda ipotesi può essere verificata utilizzando semplicemente un adattator
+e PCAN differente; la prima invece risulta più difficile da accertare.
+\end_layout
+
+\begin_layout Section
+Utilizzare ros_canopen
+\end_layout
+
+\begin_layout Standard
+La documentazione è abbastanza completa, anche se ridotta, e nel caso più
+ disperato sarebbe sempre possibile contattare il mantainer per chiarimenti
+ sul codice sorgente.
+\end_layout
+
+\begin_layout Standard
+La sintassi dei messaggi è definita nel codice sorgente di /can_msgs, per
+ la comunicazione si utilizza il nodo socketcan_bridge_node.
+ 
+\end_layout
+
+\begin_layout Standard
+Questo nodo è iscritto al topic sent_messages, i messaggi che riceve su
+ quel topic vengono tradotti in CANframes e inviati al drive; inoltre il
+ nodo pubblica su received_messages i CANframes ricevuti dal drive.
+ 
+\end_layout
+
+\begin_layout Standard
+I messaggi sono del tipo: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+Header header
+\end_layout
+
+\begin_layout Plain Layout
+
+uint32 id
+\end_layout
+
+\begin_layout Plain Layout
+
+bool is_rtr
+\end_layout
+
+\begin_layout Plain Layout
+
+bool is_extended
+\end_layout
+
+\begin_layout Plain Layout
+
+bool is_error
+\end_layout
+
+\begin_layout Plain Layout
+
+uint8 dlc
+\end_layout
+
+\begin_layout Plain Layout
+
+uint8[8] data
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Configurando i parametri del drive su /canopen_chain_node e /canopen_motor_node
+ (il file edf per CiA 402 è incluso nella cartella github del progetto,
+ il file urdf deve essere sviluppato conoscendo le geometrie del rover,
+ le quali non sono al momento disponibili) e collegando correttamente il
+ bus dovrebbe essere possibile controllare i singoli nodi attraverso un
+ messaggio del tipo joint_state, o in alternativa un interfaccia /ros_control
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ROS2020"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+Utilizzare Kacanopen
+\end_layout
+
+\begin_layout Standard
+Kacanopen è forse la libreria più facile da utilizzare data la documentazione
+ completa disponibile al link: 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://kitmedical.github.io/kacanopen/
+\end_layout
+
+\end_inset
+
+; il suo unico problema è l'impossibilità di utilizzarla in sinergia con
+ l'adattatore PEAK.
+ Una soluzione possibile sarebbe quella di sostituire l'adattatore PEAK
+ con un IXXAT usb-to-CAN FD
+\begin_inset CommandInset citation
+LatexCommand cite
+key "IXXAT"
+
+\end_inset
+
+, che tra i vantaggi ha anche quello di disporre di un attacco RJ45 automotive,
+ senza quindi necessità di adattatori addizionali.
+ 
+\end_layout
+
+\begin_layout Section
+If everything else fails...
+\end_layout
+
+\begin_layout Standard
+Il drive Micro Digital One può essere impostato per il controllo di velocità
+ analogico attraverso un segnale +-10V, con una board arduino (facilmente
+ controllabile con ROS) e con un circuito di pull-up si potrebbe creare
+ un prototipo funzionante, anche se molto meno affidabile e preciso, con
+ poche righe di codice.
+ 
 \end_layout
 
 \end_body
