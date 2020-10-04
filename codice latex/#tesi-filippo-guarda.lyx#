@@ -316,7 +316,7 @@ primalettera{L}
 a ERC, European Rover Challenge, è una competizione a livello europeo, organizza
 ta dal 2014 in Polonia.
  Anche l'Università di Bologna, sedi di Bologna e Forlì, partecipa a questa
- competizione con il gruppo AlmaX, che ha il compito di sviluppare un rover
+ competizione con il gruppo Alma-X, che ha il compito di sviluppare un rover
  che rispetti le specifiche fornite nel regolamento 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -366,7 +366,7 @@ status open
 
 \begin_layout Plain Layout
 
-https://github.com/FilippoGuarda/MotionControlAlmax
+https://github.com/FilippoGuarda/MotionControlAlma-X
 \end_layout
 
 \end_inset
@@ -1403,7 +1403,7 @@ Ringraziamenti
 
 \begin_layout Standard
 Grazie al professor Andrea Tilli per avermi fatto da relatore nonostante
- il poco preavviso, ai ragazzi di AlmaX, in particolare a Giosuè, per avermi
+ il poco preavviso, ai ragazzi di Alma-X, in particolare a Giosuè, per avermi
  introdotto ad un progetto interessante e pieno di sfide.
 \end_layout
 
