@@ -165,7 +165,7 @@ Preamble
 \newcommand{\sessione}[1]{
  \renewcommand{\@sessione}{\uppercase{#1}}}
 
-\newcommand{\relatore}[2][Chiar.mo Prof. Ing.]{
+\newcommand{\relatore}[2][Prof. Ing.]{
  \renewcommand{\@relatore}{#1\\ \uppercase{#2}}}
 
 \newcommand{\laureando}[1]{

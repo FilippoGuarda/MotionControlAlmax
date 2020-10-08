@@ -124,7 +124,6 @@ iii
 
 \begin_layout 9. Dedica
 A Giorgio, per avermi insegnato che prima viene il dovere.
- 
 \end_layout
 
 \begin_layout Standard
@@ -316,7 +315,7 @@ primalettera{L}
 a ERC, European Rover Challenge, è una competizione a livello europeo, organizza
 ta dal 2014 in Polonia.
  Anche l'Università di Bologna, sedi di Bologna e Forlì, partecipa a questa
- competizione con il gruppo AlmaX, che ha il compito di sviluppare un rover
+ competizione con il gruppo Alma-X, che ha il compito di sviluppare un rover
  che rispetti le specifiche fornite nel regolamento 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -366,7 +365,7 @@ status open
 
 \begin_layout Plain Layout
 
-https://github.com/FilippoGuarda/MotionControlAlmax
+https://github.com/FilippoGuarda/MotionControlAlma-X
 \end_layout
 
 \end_inset
@@ -415,7 +414,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Architettura del Motion Control del Rover
+Architettura del sistema di Motion Control del Rover
 \end_layout
 
 \end_inset
@@ -1403,20 +1402,23 @@ Ringraziamenti
 
 \begin_layout Standard
 Grazie al professor Andrea Tilli per avermi fatto da relatore nonostante
- il poco preavviso, ai ragazzi di AlmaX, in particolare a Giosuè, per avermi
- introdotto ad un progetto interessante e pieno di sfide.
+ il poco preavviso, ai ragazzi di Alma-X, in particolare a Giosuè, per avermi
+ introdotto ad un progetto interessante e pieno di sfide; ad AlmaAutomotive
+ per aver fornito l'hardware e a Siboni per i motori, i drives e il software
+ DriveWatcher.
 \end_layout
 
 \begin_layout Standard
-Grazie ad AlmaAutomotive per aver fornito l'hardware ed essere poi sparita,
- a Siboni per i motori, i drives e il software DriveWatcher.
+Grazie ad Adileo, per le delucidazioni riguardanti il codice non documentato
+ di ros_canopen, ad Annarita per la revisione della forma della bozza di
+ questo testo.
 \end_layout
 
 \begin_layout Standard
-Alla mia famiglia ed ai miei amici, per il supporto continuativo anche nei
- momenti più frustranti, in particolare ad Adileo, per le delucidazioni
- riguardanti il codice non documentato di ros_canopen e, insieme ad Annarita
- , per la revisione della bozza di questo testo.
+Infine un grazie alla mia famiglia e agli amici che ormai ne fanno parte,
+ per avermi sempre supportato (e sopportato) nei momenti più difficili e
+ per essere stati parte di quelli più felici.
+ A mamma, papà, Francesco, Caterina, Annarita, Adileo, Gaia ed Enrico; grazie.
  
 \end_layout
 
